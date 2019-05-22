@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace WJ.Admin
+namespace WJ.API
 {
     public static class WebApiConfig
     {
