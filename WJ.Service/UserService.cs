@@ -127,18 +127,18 @@ namespace WJ.DAL
                 {
                     var userRoleMenuList = db.Queryable<WJ_V_UserRoleMenu>().Where(p => p.UserId == userId).OrderBy(p => p.Menu_Level).ToList();
 
-                    List<dynamic> menuList = null;
+                    List<dynamic> menuList = new List<dynamic>();
                     var firstMenuList = userRoleMenuList.Where(p => p.Menu_Level.Length == 3);
                     foreach (var item in firstMenuList)
                     {
                         List<dynamic> subMenuLit = GetUserSubMenu(userRoleMenuList, item.Menu_Level);
                         if (item.Menu_Url.Contains("/"))
                         {
-                            menuList.Add(new { titl = item.Menu_Name, icon = item.Menu_Ico, jump = item.Menu_Url, list = subMenuLit });
+                            menuList.Add(new { name = "", title = item.Menu_Name, icon = item.Menu_Ico, jump = item.Menu_Url, list = subMenuLit });
                         }
                         else
                         {
-                            menuList.Add(new { titl = item.Menu_Name, icon = item.Menu_Ico, name = item.Menu_Url, list = subMenuLit });
+                            menuList.Add(new { name = item.Menu_Url, title = item.Menu_Name, icon = item.Menu_Ico, jump = "", list = subMenuLit });
                         }
                     }
                     return menuList;
@@ -162,7 +162,7 @@ namespace WJ.DAL
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    return db.Queryable<WJ_V_UserRoleMenu>().Where(p => p.UserId == userId).Select(f => f.Menu_Control).ToList();
+                    return db.Queryable<WJ_V_UserRoleMenu>().Where(p => p.UserId == userId).Select(f => f.Menu_Control.ToLower()).ToList();
                 }
             }
             catch (Exception ex)
@@ -183,18 +183,16 @@ namespace WJ.DAL
         {
             List<dynamic> menuList = new List<dynamic>();
             var subUserMenuList = userMenuList.Where(p => p.Menu_Level.Substring(0, levelCode.Length) == levelCode && p.Menu_Level.Length == levelCode.Length + 3);
-            foreach (var item in subUserMenuList)
+
+            try
             {
-                List<dynamic> subMenuList = GetSubMenu(userMenuList, item.Menu_Level);
-                if (0 == subMenuList.Count)
+                foreach (var item in subUserMenuList)
                 {
-                    menuList.Add(new { name = item.Menu_Url, title = item.Menu_Name });
-                }
-                else
-                {
-                    menuList.Add(new { name = item.Menu_Url, title = item.Menu_Name, list = subMenuList });
+                    List<dynamic> subMenuList = GetSubMenu(userMenuList, item.Menu_Level);
+                    menuList.Add(new { jump = item.Menu_Url, title = item.Menu_Name, list = subMenuList });
                 }
             }
+            catch { }
             return menuList;
         }
 
@@ -207,19 +205,17 @@ namespace WJ.DAL
         public List<dynamic> GetUserSubMenu(List<WJ_V_UserRoleMenu> userMenuList, string levelCode)
         {
             List<dynamic> menuList = new List<dynamic>();
-            var subUserMenuList = userMenuList.Where(p => p.Menu_Level.Substring(0, levelCode.Length) == levelCode && p.Menu_Level.Length == levelCode.Length + 3);
-            foreach (var item in subUserMenuList)
+            var subUserMenuList = userMenuList.Where<WJ_V_UserRoleMenu>(p => p.Menu_Level.Substring(0, levelCode.Length) == levelCode && p.Menu_Level.Length == levelCode.Length + 3);
+
+            try
             {
-                List<dynamic> subMenuList = GetUserSubMenu(userMenuList, item.Menu_Level);
-                if (0 == subMenuList.Count)
+                foreach (var item in subUserMenuList)
                 {
-                    menuList.Add(new { name = item.Menu_Url, title = item.Menu_Name });
-                }
-                else
-                {
-                    menuList.Add(new { name = item.Menu_Url, title = item.Menu_Name, list = subMenuList });
+                    List<dynamic> subMenuList = GetUserSubMenu(userMenuList, item.Menu_Level);
+                    menuList.Add(new { jump = item.Menu_Url, title = item.Menu_Name, list = subMenuList });
                 }
             }
+            catch { }
             return menuList;
         }
     }

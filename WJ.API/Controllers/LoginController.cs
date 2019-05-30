@@ -52,6 +52,7 @@ namespace WJ.API.Controllers
                             ,IsSuperAdmin = userId == 0
                             ,CreateTime = DateTime.Now
                             ,TokenTimeLimit = DateTime.Now.AddSeconds(tokenTimeLimit)
+                            //,RoleMenu = UserService.Instance.GetUserControllerName(userId)
                         };
                         string token = JWTService.Instance.CreateToken(authInfo);
                         result = new { code = 0, success = 0, data = new { access_token = token } };
@@ -65,37 +66,5 @@ namespace WJ.API.Controllers
 
             return Json<dynamic>(result);
         }
-
-        //[AllowAnonymous]
-        //[HttpGet]
-        //public IHttpActionResult Loginn(string userName, string password)
-        //{
-        //    dynamic result = new { code = 0, success = 1, msg = "登录失败" };
-        //    try
-        //    {
-        //        if (string.IsNullOrWhiteSpace(userName) && string.IsNullOrWhiteSpace(password))
-        //        {
-        //            int userId = UserService.Instance.UserLogin(userName, password);
-        //            if (userId > -1)
-        //            {
-        //                AuthInfo authInfo = new AuthInfo()
-        //                {
-        //                    UserId = userId
-        //                    ,IsSuperAdmin = userName == "SuperAdmin"
-        //                    ,CreateTime = DateTime.Now
-        //                    ,TimeOut = DateTime.Now.AddSeconds(7200)
-        //                };
-        //                string token = JWTService.Instance.CreateToken(authInfo);
-        //                result = new { code = 0, success = 0, data = new { access_token = token } };
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //    }
-
-        //    return Json<dynamic>(result);
-        //}
     }
 }

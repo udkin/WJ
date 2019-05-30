@@ -20,7 +20,7 @@ namespace WJ.API.Controllers
             {
                 AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
 
-                if (authInfo == null || authInfo.TokenTimeLimit >= DateTime.Now)
+                if (authInfo == null || DateTime.Now >= authInfo.TokenTimeLimit)
                 {
                     result = new { code = 1001 };
                 }

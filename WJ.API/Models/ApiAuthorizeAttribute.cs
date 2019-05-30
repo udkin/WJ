@@ -33,7 +33,7 @@ namespace WJ.API.Models
                     }
                     else
                     {
-                        string controllerName = actionContext.ControllerContext.ControllerDescriptor.ControllerName;
+                        string controllerName = actionContext.ControllerContext.ControllerDescriptor.ControllerName.ToLower();
                         List<string> controllerList = UserService.Instance.GetUserControllerName(authInfo.UserId);
 
                         // 有访问控制器权继续处理，否则返回401
