@@ -9,33 +9,42 @@ using WJ.DAL;
 
 namespace WJ.API.Controllers
 {
+    [ApiAuthorizeAttribute]
     public class UserController : ApiController
     {
-        [HttpPost]
-        public dynamic Login([FromBody]dynamic request)
+        [HttpGet]
+        public IHttpActionResult GetUserRoleMenu()
         {
-            ResponseResult result = new ResponseResult();
+            dynamic result = new { code = 0, success = 1, msg = "获取菜单异常" };
             try
             {
-                if (string.IsNullOrWhiteSpace(request.UserName) || string.IsNullOrWhiteSpace(request.Password))
+                AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
+
+                if (authInfo == null || authInfo.TokenTimeLimit >= DateTime.Now)
                 {
-                    result.Success = false;
+                    result = new { code = 1001 };
                 }
                 else
                 {
-                    string password = UserService.Instance.UserLogin(request.UserName.ToString());
-                    if(request.Password == password)
+                    List<dynamic> menuList = null;
+                    if (0 == authInfo.UserId)
                     {
-                        result.Success = true;
+                        menuList = UserService.Instance.GetSuperAdminMenu();
                     }
+                    else
+                    {
+                        menuList = UserService.Instance.GetUserRoleMenu(authInfo.UserId);
+                    }
+                    result = new { code = 0, success = 0, data = menuList };
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txtss");
             }
 
-            return result;
+            return Json<dynamic>(result);
         }
     }
 }

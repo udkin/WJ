@@ -20,7 +20,7 @@ namespace WJ.API.Models
             get
             {
                 if (_instance == null)
-                    lock ("TokenService")
+                    lock ("JWTService")
                         if (_instance == null)
                             _instance = new JWTService();
 
@@ -34,9 +34,9 @@ namespace WJ.API.Models
         /// </summary>
         /// <param name="authInfo"></param>
         /// <returns></returns>
-        public string CreateToken(AuthInfo authInfo)
+        public string CreateToken(dynamic authInfo)
         {
-            string secret = System.Configuration.ConfigurationManager.AppSettings[""];
+            string secret = System.Configuration.ConfigurationManager.AppSettings["SecureKey"];
 
             IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
             IJsonSerializer serializer = new JsonNetSerializer();
@@ -55,7 +55,7 @@ namespace WJ.API.Models
         /// <returns></returns>
         public AuthInfo DecodeToken(string token)
         {
-            string secret = System.Configuration.ConfigurationManager.AppSettings[""];
+            string secret = System.Configuration.ConfigurationManager.AppSettings["SecureKey"];
             AuthInfo authInfo = null;
 
             IJsonSerializer serializer = new JsonNetSerializer();

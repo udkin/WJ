@@ -1,0 +1,8 @@
+﻿<Root>
+  <Config>
+    <!--超级管理员密码-->
+    <item key="SuperPassword" value="wjadmin"></item>
+    <!--Token有效时间，单位秒-->
+    <item key="TokenTimeLimit" value="7200"></item>
+  </Config>
+</Root>

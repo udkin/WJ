@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Routing;
+using WJ.API.Models;
 
 namespace WJ.API
 {
@@ -11,7 +12,12 @@ namespace WJ.API
     {
         protected void Application_Start()
         {
+            // 获取网站配置信息到缓存中
+            WebSiteConfigService.Instance.FillWebSiteConfig();
+
             GlobalConfiguration.Configure(WebApiConfig.Register);
+            // 使api返回为json 
+            GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
         }
     }
 }

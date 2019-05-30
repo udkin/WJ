@@ -17,7 +17,7 @@ namespace WJ.DAL
         {
             SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
             {
-                ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings[""].ConnectionString,
+                ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Defalut"].ConnectionString,
                 DbType = DbType.SqlServer,
                 IsAutoCloseConnection = true,
                 InitKeyType = InitKeyType.Attribute
