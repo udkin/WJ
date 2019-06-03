@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace WJ.API.Models
+namespace WJ.Common
 {
     public class LogHelper
     {
@@ -28,14 +28,13 @@ namespace WJ.API.Models
         }
         #endregion
 
-        private object lockLog = new object(); //日志排他锁
         /// <summary>
         /// 调式日志，用于调式日志输出
         /// </summary>
         /// <param name="log"></param>
-        internal void Debuglog(string log, string logname = "_Debuglog.txt")
+        public void Debuglog(string log, string logname = "_Debuglog.txt")
         {
-            lock (lockLog) //防止并发异常
+            lock ("Debug") //防止并发异常
             {
                 try
                 {
@@ -46,10 +45,7 @@ namespace WJ.API.Models
                     sw.WriteLine("---------------");
                     sw.Close();
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
         }
     }

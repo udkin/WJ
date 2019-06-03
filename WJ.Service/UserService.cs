@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WJ.DAL
+namespace WJ.Service
 {
     public class UserService
     {
@@ -41,7 +41,7 @@ namespace WJ.DAL
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    var user = db.Queryable<WJ_T_User>().Where(p => p.User_LoginName == loginName).First();
+                    var user = db.Queryable<WJ_T_User>().Where(p => p.User_LoginName == loginName && p.User_State == 1).First();
                     if (user != null && user.User_Password == password)
                     {
                         return user.Id;
@@ -68,18 +68,18 @@ namespace WJ.DAL
                 {
                     var allMenuList = db.Queryable<WJ_T_Menu>().OrderBy(p => p.Menu_Level).ToList();
 
-                    List<dynamic> menuList = null;
+                    List<dynamic> menuList = new List<dynamic>();
                     var firstMenuList = allMenuList.Where(p => p.Menu_Level.Length == 3);
                     foreach (var item in firstMenuList)
                     {
                         List<dynamic> subMenuLit = GetSubMenu(allMenuList, item.Menu_Level);
-                        if (item.Menu_Url.Contains("/"))
+                        if (item.Menu_Url != null)
                         {
-                            menuList.Add(new { titl = item.Menu_Name, icon = item.Menu_Ico, jump = item.Menu_Url, list = subMenuLit });
+                            menuList.Add(new { title = item.Menu_Name, icon = item.Menu_Ico, jump = item.Menu_Url, list = subMenuLit });
                         }
                         else
                         {
-                            menuList.Add(new { titl = item.Menu_Name, icon = item.Menu_Ico, name = item.Menu_Url, list = subMenuLit });
+                            menuList.Add(new { title = item.Menu_Name, icon = item.Menu_Ico, list = subMenuLit });
                         }
                     }
                     return menuList;
@@ -134,11 +134,11 @@ namespace WJ.DAL
                         List<dynamic> subMenuLit = GetUserSubMenu(userRoleMenuList, item.Menu_Level);
                         if (item.Menu_Url.Contains("/"))
                         {
-                            menuList.Add(new { name = "", title = item.Menu_Name, icon = item.Menu_Ico, jump = item.Menu_Url, list = subMenuLit });
+                            menuList.Add(new { title = item.Menu_Name, icon = item.Menu_Ico, jump = item.Menu_Url, list = subMenuLit });
                         }
                         else
                         {
-                            menuList.Add(new { name = item.Menu_Url, title = item.Menu_Name, icon = item.Menu_Ico, jump = "", list = subMenuLit });
+                            menuList.Add(new { name = item.Menu_Url, title = item.Menu_Name, icon = item.Menu_Ico, list = subMenuLit });
                         }
                     }
                     return menuList;
@@ -171,12 +171,29 @@ namespace WJ.DAL
                 return null;
             }
         }
+
+        public bool AuthorizeController(string controllerName)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Queryable<WJ_T_Menu>().Any(p => p.Menu_Control == controllerName);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
         #endregion
 
+        #region 返回子菜单
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="menuList"></param>
+        /// <param name="userMenuList"></param>
         /// <param name="levelCode"></param>
         /// <returns></returns>
         public List<dynamic> GetSubMenu(List<WJ_T_Menu> userMenuList, string levelCode)
@@ -205,7 +222,7 @@ namespace WJ.DAL
         public List<dynamic> GetUserSubMenu(List<WJ_V_UserRoleMenu> userMenuList, string levelCode)
         {
             List<dynamic> menuList = new List<dynamic>();
-            var subUserMenuList = userMenuList.Where<WJ_V_UserRoleMenu>(p => p.Menu_Level.Substring(0, levelCode.Length) == levelCode && p.Menu_Level.Length == levelCode.Length + 3);
+            var subUserMenuList = userMenuList.Where(p => p.Menu_Level.Substring(0, levelCode.Length) == levelCode && p.Menu_Level.Length == levelCode.Length + 3);
 
             try
             {
@@ -217,6 +234,24 @@ namespace WJ.DAL
             }
             catch { }
             return menuList;
+        }
+        #endregion
+
+        public List<dynamic> GetUserList()
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    //return db.Queryable<WJ_T_User>().Where(p => p.User_Type == 1 && p.User_State == 1).ToList();
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
     }
 }

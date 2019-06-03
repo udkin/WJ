@@ -8,7 +8,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
-using WJ.DAL;
+using WJ.Service;
 
 namespace WJ.API.Models
 {
@@ -24,7 +24,7 @@ namespace WJ.API.Models
                 string token = authHeader.FirstOrDefault();
                 //对token进行解密
                 AuthInfo authInfo = JWTService.Instance.DecodeToken(token);
-                if (authInfo != null)
+                if (authInfo != null || DateTime.Now >= authInfo.TokenTimeLimit)
                 {
                     if (0 == authInfo.UserId)
                     {
@@ -34,10 +34,8 @@ namespace WJ.API.Models
                     else
                     {
                         string controllerName = actionContext.ControllerContext.ControllerDescriptor.ControllerName.ToLower();
-                        List<string> controllerList = UserService.Instance.GetUserControllerName(authInfo.UserId);
-
                         // 有访问控制器权继续处理，否则返回401
-                        if (controllerList.Contains(controllerName))
+                        if (UserService.Instance.AuthorizeController(controllerName))
                         {
                             actionContext.RequestContext.RouteData.Values.Add("access_token", authInfo);
                             base.IsAuthorized(actionContext);

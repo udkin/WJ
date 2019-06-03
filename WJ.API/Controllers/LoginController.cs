@@ -5,15 +5,19 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using WJ.API.Models;
-using WJ.DAL;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using WJ.Common;
+using Models;
+using WJ.Service;
 
 namespace WJ.API.Controllers
 {
-    [Authorize]
+    [ApiAuthorize]
     public class LoginController : ApiController
     {
+        public object Token { get; private set; }
+
         /// <summary>
         /// 用户登录
         /// </summary>
@@ -33,9 +37,9 @@ namespace WJ.API.Controllers
                     string password = request.Password.ToString().ToLower();
 
                     int userId = -1;
-                    if ("superadmin" == userName && password == WebSiteConfigService.Instance.WebSiteConfig["SuperPassword"])
+                    if ("superadmin" == userName && password == ConfigHelper.Instance.WebSiteConfig["SuperPassword"])
                     {
-                        userId = 0;
+                        userId = 1;
                     }
                     else
                     {
@@ -44,14 +48,22 @@ namespace WJ.API.Controllers
 
                     if (userId > -1)
                     {
-                        int tokenTimeLimit = int.Parse(WebSiteConfigService.Instance.WebSiteConfig["TokenTimeLimit"]);
-                        
+                        int tokenTimeLimit = int.Parse(ConfigHelper.Instance.WebSiteConfig["TokenTimeLimit"]);
+
+                        WJ_T_Token tokenInfo = new WJ_T_Token();
+                        tokenInfo.UserId = userId;
+                        tokenInfo.Token_Ip = System.Web.HttpContext.Current.Request.UserHostAddress;
+                        tokenInfo.Token_CreateTime = DateTime.Now;
+                        tokenInfo.Token_TimeLimit = DateTime.Now.AddSeconds(tokenTimeLimit);
+
+                        TokenService.Instance.Add(tokenInfo);
+
                         AuthInfo authInfo = new AuthInfo()
                         {
-                            UserId = userId
-                            ,IsSuperAdmin = userId == 0
-                            ,CreateTime = DateTime.Now
-                            ,TokenTimeLimit = DateTime.Now.AddSeconds(tokenTimeLimit)
+                            UserId = userId,
+                            IsSuperAdmin = userId == 0,
+                            CreateTime = tokenInfo.Token_CreateTime,
+                            TokenTimeLimit = tokenInfo.Token_TimeLimit
                             //,RoleMenu = UserService.Instance.GetUserControllerName(userId)
                         };
                         string token = JWTService.Instance.CreateToken(authInfo);

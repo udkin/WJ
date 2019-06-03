@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
 using System.Xml.Linq;
 
-namespace WJ.API.Models
+namespace WJ.Common
 {
-    public class WebSiteConfigService
+    public class ConfigHelper
     {
         #region 单列模式
-        private static WebSiteConfigService _instance = null;
+        private static ConfigHelper _instance = null;
 
-        private WebSiteConfigService() { }
+        private ConfigHelper() { }
 
-        public static WebSiteConfigService Instance
+        public static ConfigHelper Instance
         {
             get
             {
                 if (_instance == null)
                     lock ("SiteConfigService")
                         if (_instance == null)
-                            _instance = new WebSiteConfigService();
+                            _instance = new ConfigHelper();
 
                 return _instance;
             }
@@ -36,7 +38,7 @@ namespace WJ.API.Models
         /// <summary>
         /// 
         /// </summary>
-        public Dictionary<string,string> WebSiteConfig { set; get; }
+        public Dictionary<string, string> WebSiteConfig { set; get; }
         #endregion
 
         #region 填充网站配置信息
@@ -66,7 +68,7 @@ namespace WJ.API.Models
 
                                 if (!WebSiteConfig.ContainsKey(key))
                                 {
-                                    WebSiteConfig.Add(key,value);
+                                    WebSiteConfig.Add(key, value);
                                 }
                             }
 
@@ -92,7 +94,7 @@ namespace WJ.API.Models
             }
         }
 
-        #region 暂未实际方法
+        #region 暂未实现方法
         /// <summary>
         /// 缓存删除之前调用方法
         /// </summary>
@@ -129,7 +131,7 @@ namespace WJ.API.Models
         public void RemoveCallback(string key, object value, CacheItemRemovedReason reason)
         {
 
-        } 
+        }
         #endregion
         #endregion
     }

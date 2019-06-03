@@ -7,8 +7,8 @@
     <ProjectGuid>{85594D26-5BF0-48FA-B6F2-46873899C80C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WJ.DAL</RootNamespace>
-    <AssemblyName>WJ.DAL</AssemblyName>
+    <RootNamespace>WJ.Service</RootNamespace>
+    <AssemblyName>WJ.Service</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DbHelper.cs" />
+    <Compile Include="ServiceBase.cs" />
     <Compile Include="TokenService.cs" />
     <Compile Include="UserService.cs" />
   </ItemGroup>
