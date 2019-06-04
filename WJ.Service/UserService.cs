@@ -29,6 +29,7 @@ namespace WJ.Service
         }
         #endregion
 
+        #region 验证用户登录信息
         /// <summary>
         /// 
         /// </summary>
@@ -53,7 +54,8 @@ namespace WJ.Service
                 Console.WriteLine(ex.Message);
             }
             return userId;
-        }
+        } 
+        #endregion
 
         #region 超级管理员
         /// <summary>
@@ -66,20 +68,20 @@ namespace WJ.Service
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    var allMenuList = db.Queryable<WJ_T_Menu>().OrderBy(p => p.Menu_Level).ToList();
+                    var allMenuList = db.Queryable<WJ_T_Menu>().Where(p => p.Menu_State == 1).OrderBy(p => p.Menu_Level).ToList();
 
                     List<dynamic> menuList = new List<dynamic>();
                     var firstMenuList = allMenuList.Where(p => p.Menu_Level.Length == 3);
                     foreach (var item in firstMenuList)
                     {
                         List<dynamic> subMenuLit = GetSubMenu(allMenuList, item.Menu_Level);
-                        if (item.Menu_Url != null)
+                        if (item.Menu_Url.Contains("/"))
                         {
                             menuList.Add(new { title = item.Menu_Name, icon = item.Menu_Ico, jump = item.Menu_Url, list = subMenuLit });
                         }
                         else
                         {
-                            menuList.Add(new { title = item.Menu_Name, icon = item.Menu_Ico, list = subMenuLit });
+                            menuList.Add(new { title = item.Menu_Name, icon = item.Menu_Ico, name = item.Menu_Url, list = subMenuLit });
                         }
                     }
                     return menuList;
@@ -172,6 +174,11 @@ namespace WJ.Service
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="controllerName"></param>
+        /// <returns></returns>
         public bool AuthorizeController(string controllerName)
         {
             try
@@ -187,7 +194,6 @@ namespace WJ.Service
                 return false;
             }
         }
-        #endregion
 
         #region 返回子菜单
         /// <summary>
@@ -236,15 +242,20 @@ namespace WJ.Service
             return menuList;
         }
         #endregion
+        #endregion
 
-        public List<dynamic> GetUserList()
+        #region 获取后台管理员列表信息
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<WJ_V_User> GetManagerList()
         {
             try
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    //return db.Queryable<WJ_T_User>().Where(p => p.User_Type == 1 && p.User_State == 1).ToList();
-                    return null;
+                    return db.Queryable<WJ_V_User>().Where(p => p.User_Type == 1 && p.User_State == 1).ToList();
                 }
             }
             catch (Exception ex)
@@ -253,5 +264,28 @@ namespace WJ.Service
                 return null;
             }
         }
+        #endregion
+
+        #region 获取前台操作员列表信息
+        /// <summary>
+        /// 获取前台操作员列表信息
+        /// </summary>
+        /// <returns></returns>
+        public List<WJ_V_User> GetUserList()
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Queryable<WJ_V_User>().Where(p => p.User_Type > 1 && p.User_State == 1).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+        #endregion
     }
 }

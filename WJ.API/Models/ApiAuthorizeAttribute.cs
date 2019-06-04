@@ -78,7 +78,7 @@ namespace WJ.API.Models
 
             var response = filterContext.Response = filterContext.Response ?? new HttpResponseMessage();
             // 403
-            response.StatusCode = HttpStatusCode.Forbidden;
+            response.StatusCode = HttpStatusCode.OK;
             response.Content = new StringContent(JsonConvert.SerializeObject(new { code = 1001 }), Encoding.UTF8, "application/json");
         }
 

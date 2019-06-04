@@ -13,6 +13,7 @@ namespace WJ.API.Controllers
     [ApiAuthorize]
     public class UserController : ApiController
     {
+        #region 用户登录
         /// <summary>
         /// 用户登录
         /// </summary>
@@ -53,16 +54,23 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
             }
 
             return Json<dynamic>(result);
-        }
+        } 
+        #endregion
 
+        #region 获取用户权限菜单
+        /// <summary>
+        /// 获取用户权限菜单
+        /// </summary>
+        /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet]
         public IHttpActionResult GetUserRoleMenu()
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取菜单异常" };
+            dynamic result = new { code = 0, success = 1, msg = "获取菜单失败" };
             try
             {
                 AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
@@ -88,13 +96,19 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txtss");
+                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
             }
 
             return Json<dynamic>(result);
         }
+        #endregion
 
-        [HttpPost]
+        #region 获取用户信息
+        /// <summary>
+        /// 获取后台管理员列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public IHttpActionResult GetUserInfo()
         {
             dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
@@ -108,31 +122,29 @@ namespace WJ.API.Controllers
                 }
                 else
                 {
-                    List<dynamic> menuList = null;
-                    if (1 == authInfo.UserId)
-                    {
-                        menuList = UserService.Instance.GetSuperAdminMenu();
-                    }
-                    else
-                    {
-                        menuList = UserService.Instance.GetUserRoleMenu(authInfo.UserId);
-                    }
+                    var menuList = UserService.Instance.GetManagerList();
                     result = new { code = 0, success = 0, data = menuList };
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txtss");
+                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
             }
 
             return Json<dynamic>(result);
         }
+        #endregion
 
-        [HttpPost]
-        public IHttpActionResult GetUserList()
+        #region 获取后台管理员列表信息
+        /// <summary>
+        /// 获取后台管理员列表信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetManagerList()
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取管理员列表失败" };
+            dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
             try
             {
                 AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
@@ -143,25 +155,51 @@ namespace WJ.API.Controllers
                 }
                 else
                 {
-                    List<dynamic> menuList = null;
-                    if (1 == authInfo.UserId)
-                    {
-                        menuList = UserService.Instance.GetSuperAdminMenu();
-                    }
-                    else
-                    {
-                        menuList = UserService.Instance.GetUserRoleMenu(authInfo.UserId);
-                    }
+                    var menuList = UserService.Instance.GetManagerList();
                     result = new { code = 0, success = 0, data = menuList };
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txtss");
+                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
             }
 
             return Json<dynamic>(result);
         }
+        #endregion
+
+        #region 获取操作用户列表信息
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IHttpActionResult GetUserList()
+        {
+            dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
+            try
+            {
+                AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
+
+                if (authInfo == null || DateTime.Now >= authInfo.TokenTimeLimit)
+                {
+                    result = new { code = 1001 };
+                }
+                else
+                {
+                    var menuList = UserService.Instance.GetUserList();
+                    result = new { code = 0, success = 0, data = menuList };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
+            }
+
+            return Json<dynamic>(result);
+        } 
+        #endregion
     }
 }

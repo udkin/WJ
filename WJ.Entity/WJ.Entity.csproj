@@ -41,13 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="T4\SugarTemplate.cs" />
-    <Compile Include="T4\SugarTemplate1.cs" />
-    <Compile Include="T4\SugarTemplate3.cs">
-      <DependentUpon>SugarTemplate.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="WJ_T_AccessLog.cs" />
     <Compile Include="WJ_T_App.cs" />
     <Compile Include="WJ_T_AppClass.cs" />
@@ -59,24 +52,18 @@
     <Compile Include="WJ_T_PlanApp.cs" />
     <Compile Include="WJ_T_Role.cs" />
     <Compile Include="WJ_T_RoleMenu.cs" />
+    <Compile Include="WJ_T_SystemConfig.cs" />
     <Compile Include="WJ_T_Token.cs" />
     <Compile Include="WJ_T_User.cs" />
     <Compile Include="WJ_T_UserApp.cs" />
     <Compile Include="WJ_T_UserRole.cs" />
+    <Compile Include="WJ_V_User.cs" />
     <Compile Include="WJ_V_UserApp.cs" />
     <Compile Include="WJ_V_UserPlanApp.cs" />
     <Compile Include="WJ_V_UserRoleMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="T4\Newtonsoft.Json.dll" />
-    <Content Include="T4\SqlSugar.dll" />
-    <Content Include="T4\SugarTemplate.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>SugarTemplate3.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
