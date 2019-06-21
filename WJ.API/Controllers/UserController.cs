@@ -6,18 +6,22 @@ using System.Net.Http;
 using System.Web.Http;
 using WJ.API.Models;
 using WJ.Common;
+using WJ.Entity;
 using WJ.Service;
 
 namespace WJ.API.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [ApiAuthorize]
-    public class UserController : ApiController
+    public class UserController : ApiBaseController
     {
         #region 用户登录
         /// <summary>
         /// 用户登录
         /// </summary>
-        /// <param name="request">输入POST请求的JSON值{"UserName":"","Password":""}</param>
+        /// <param name="request">输入POST请求的JSON值{"UserName":"admin","Password":"123456"}</param>
         /// <returns></returns>
         //[ValidateInput(false)]
         [AllowAnonymous]
@@ -27,7 +31,7 @@ namespace WJ.API.Controllers
             dynamic result = new { code = 0, success = -1, msg = "登录失败" };
             try
             {
-                if (!string.IsNullOrWhiteSpace(request.UserName.ToString()) && !string.IsNullOrWhiteSpace(request.Password.ToString()))
+                if (IsPropertyExist(request, "UserName") && IsPropertyExist(request, "Password"))
                 {
                     string userName = request.UserName.ToString().ToLower();
                     string password = request.Password.ToString().ToLower();
@@ -36,6 +40,7 @@ namespace WJ.API.Controllers
 
                     if (userId > -1)
                     {
+                        // Token有效期
                         int tokenTimeLimit = int.Parse(ConfigHelper.Instance.WebSiteConfig["TokenTimeLimit"]);
 
                         AuthInfo authInfo = new AuthInfo()
@@ -54,11 +59,11 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
             return Json<dynamic>(result);
-        } 
+        }
         #endregion
 
         #region 获取用户权限菜单
@@ -84,11 +89,11 @@ namespace WJ.API.Controllers
                     List<dynamic> menuList = null;
                     if (1 == authInfo.UserId)
                     {
-                        menuList = UserService.Instance.GetSuperAdminMenu();
+                        menuList = MenuService.Instance.GetSuperAdminMenu();
                     }
                     else
                     {
-                        menuList = UserService.Instance.GetUserRoleMenu(authInfo.UserId);
+                        menuList = MenuService.Instance.GetUserRoleMenu(authInfo.UserId);
                     }
                     result = new { code = 0, success = 0, data = menuList };
                 }
@@ -96,16 +101,16 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
             return Json<dynamic>(result);
         }
         #endregion
 
-        #region 获取用户信息
+        #region 获取当前用户信息
         /// <summary>
-        /// 获取后台管理员列表
+        /// 获取当前用户信息
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -122,14 +127,14 @@ namespace WJ.API.Controllers
                 }
                 else
                 {
-                    var menuList = UserService.Instance.GetManagerList();
-                    result = new { code = 0, success = 0, data = menuList };
+                    var user = UserService.Instance.GetUserInfo(authInfo.UserId);
+                    result = new { code = 0, success = 0, data = user };
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
             return Json<dynamic>(result);
@@ -141,8 +146,8 @@ namespace WJ.API.Controllers
         /// 获取后台管理员列表信息
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public IHttpActionResult GetManagerList()
+        [HttpPost]
+        public IHttpActionResult GetManagerList(dynamic request)
         {
             dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
             try
@@ -155,14 +160,24 @@ namespace WJ.API.Controllers
                 }
                 else
                 {
-                    var menuList = UserService.Instance.GetManagerList();
-                    result = new { code = 0, success = 0, data = menuList };
+                    List<WJ_V_User> managerList = null;
+                    if (IsPropertyExist(request, "page") && IsPropertyExist(request, "limit"))
+                    {
+                        int page = request.page;
+                        int limit = request.limit;
+                        managerList = UserService.Instance.GetManagerList(page, limit);
+                    }
+                    else
+                    {
+                        managerList = UserService.Instance.GetManagerList();
+                    }
+                    result = new { code = 0, success = 0, data = managerList };
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
             return Json<dynamic>(result);
@@ -195,11 +210,11 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.Instance.Debuglog(ex.Message, "_Controllers.txt");
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
             return Json<dynamic>(result);
-        } 
+        }
         #endregion
     }
 }

@@ -20,6 +20,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
+                Common.LogHelper.ErrorLog(ex.Message);
                 return false;
             }
         }
@@ -36,6 +37,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
+                Common.LogHelper.ErrorLog(ex.Message);
                 return false;
             }
         }
@@ -53,6 +55,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
+                Common.LogHelper.ErrorLog(ex.Message);
                 return false;
             }
         }
@@ -69,6 +72,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
+                Common.LogHelper.ErrorLog(ex.Message);
                 return false;
             }
         }

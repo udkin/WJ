@@ -90,7 +90,7 @@ namespace WJ.Common
             }
             catch (Exception ex)
             {
-                LogHelper.Instance.Debuglog("【网站配置文件异常】：" + ex.Message, "_WebSiteConfig.txt");
+                LogHelper.DebugLog("【网站配置文件异常】：" + ex.Message, LogType.SiteConfig);
             }
         }
 

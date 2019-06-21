@@ -27,4 +27,4 @@
 	 var db = new SqlSugarClient(new ConnectionConfig() { ConnectionString =  "server=.;uid=sa;pwd=123qwe;database=WJ", DbType = DbType.SqlServer, IsAutoCloseConnection = true });
       db.DbFirst.CreateClassFile("D:\\01 Work\\01 无极\\WJ\\WJ.Entity\\");
      
-#>
+#>1

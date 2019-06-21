@@ -5,13 +5,14 @@ using System.Text;
 namespace WJ.Entity
 {
     ///<summary>
-    ///角色表
+    ///职务表
     ///</summary>
-    public partial class WJ_T_Role
+    public partial class WJ_T_Title
     {
-        public WJ_T_Role()
+        public WJ_T_Title()
         {
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -20,39 +21,39 @@ namespace WJ.Entity
         public int Id { get; set; }
 
         /// <summary>
-        /// Desc:角色名称
+        /// Desc:职务名称
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public string Role_Name { get; set; }
+        public string Title_Name { get; set; }
 
         /// <summary>
-        /// Desc:操作者
+        /// Desc:职务全称
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
+        public string Title_FullName { get; set; }
+
+        /// <summary>
+        /// Desc:职务编号
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
+        public string Title_Code { get; set; }
+
+        /// <summary>
+        /// Desc:排序号
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public int Role_Operator { get; set; }
+        public int Title_Sort { get; set; }
 
         /// <summary>
-        /// Desc:操作时间 
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public DateTime Role_OperationTime { get; set; }
-
-        /// <summary>
-        /// Desc:排序字段
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public int Role_Sort { get; set; }
-
-        /// <summary>
-        /// Desc:角色可用 状态，-1：废弃，1：正常
+        /// Desc:职务状态，-1：删除，1：正常
         /// Default:1
         /// Nullable:False
         /// </summary>           
-        public int Role_State { get; set; }
+        public int Title_State { get; set; }
 
     }
 }

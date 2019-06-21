@@ -52,7 +52,8 @@
     <Compile Include="WJ_T_PlanApp.cs" />
     <Compile Include="WJ_T_Role.cs" />
     <Compile Include="WJ_T_RoleMenu.cs" />
-    <Compile Include="WJ_T_SystemConfig.cs" />
+    <Compile Include="WJ_T_SystemMap.cs" />
+    <Compile Include="WJ_T_Title.cs" />
     <Compile Include="WJ_T_Token.cs" />
     <Compile Include="WJ_T_User.cs" />
     <Compile Include="WJ_T_UserApp.cs" />

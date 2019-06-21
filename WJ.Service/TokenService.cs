@@ -1,10 +1,10 @@
-﻿using Models;
-using SqlSugar;
+﻿using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WJ.Entity;
 
 namespace WJ.Service
 {
@@ -40,6 +40,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
+                Common.LogHelper.ErrorLog(ex.Message);
                 return false;
             }
         }
@@ -56,6 +57,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
+                Common.LogHelper.ErrorLog(ex.Message);
                 return false;
             }
         }

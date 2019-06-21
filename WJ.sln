@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.Service", "WJ.Service\WJ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.Common", "WJ.Common\WJ.Common.csproj", "{20241CC5-7A51-4C67-9612-553D8ED478ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.DataService", "WJ.DataService\WJ.DataService.csproj", "{522E6BEB-435B-45BC-9E14-E3969AB727F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{20241CC5-7A51-4C67-9612-553D8ED478ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20241CC5-7A51-4C67-9612-553D8ED478ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20241CC5-7A51-4C67-9612-553D8ED478ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{522E6BEB-435B-45BC-9E14-E3969AB727F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{522E6BEB-435B-45BC-9E14-E3969AB727F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{522E6BEB-435B-45BC-9E14-E3969AB727F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{522E6BEB-435B-45BC-9E14-E3969AB727F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

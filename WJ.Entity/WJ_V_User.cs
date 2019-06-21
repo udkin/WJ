@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Models
+namespace WJ.Entity
 {
     ///<summary>
     ///
@@ -68,14 +68,14 @@ namespace Models
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public int User_DeptId { get; set; }
+        public int DeptId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public string User_Job { get; set; }
+        public string TitleId { get; set; }
 
         /// <summary>
         /// Desc:
@@ -92,9 +92,11 @@ namespace Models
         public DateTime User_CreateTime { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public string User_CreateTimeShort { set; get; }
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
+        public string User_CreateTimeShort { get; set; }
 
         /// <summary>
         /// Desc:
@@ -118,13 +120,24 @@ namespace Models
         public string User_TypeName { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
-        public string Dept_Name { set; get; }
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string Dept_Name { get; set; }
 
         /// <summary>
-        /// 
-        /// </summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
         public string Role_Name { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary> 
+        public string Title_Name { get; set; }
     }
 }

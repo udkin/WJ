@@ -35,7 +35,7 @@ namespace WJ.API.Models
                     {
                         string controllerName = actionContext.ControllerContext.ControllerDescriptor.ControllerName.ToLower();
                         // 有访问控制器权继续处理，否则返回401
-                        if (UserService.Instance.AuthorizeController(controllerName))
+                        if (MenuService.Instance.AuthorizeController(controllerName))
                         {
                             actionContext.RequestContext.RouteData.Values.Add("access_token", authInfo);
                             base.IsAuthorized(actionContext);
@@ -77,8 +77,8 @@ namespace WJ.API.Models
             base.HandleUnauthorizedRequest(filterContext);
 
             var response = filterContext.Response = filterContext.Response ?? new HttpResponseMessage();
-            // 403
-            response.StatusCode = HttpStatusCode.OK;
+            //response.StatusCode = HttpStatusCode.Forbidden; // 403未通过授权
+            response.StatusCode = HttpStatusCode.OK; // 200
             response.Content = new StringContent(JsonConvert.SerializeObject(new { code = 1001 }), Encoding.UTF8, "application/json");
         }
 
