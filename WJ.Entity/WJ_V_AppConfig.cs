@@ -1,81 +1,98 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace WJ.Entity
 {
-    ///<summary>
-    ///用户角色菜单视图
-    ///</summary>
-    public partial class WJ_V_UserRoleMenu
+    public partial class WJ_V_AppConfig
     {
-        public WJ_V_UserRoleMenu()
+        public WJ_V_AppConfig()
         {
 
-
         }
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public int UserId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int RoleId { get; set; }
+        public int AppId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string Menu_Name { get; set; }
+        public int AppConfigId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public string App_LoginUrl { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public string App_HomeUrl { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public string App_Method { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public string AppConfig_Parameter { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
-        public string Menu_Ico { get; set; }
+        public string LoginName { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
-        public string Menu_Control { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        public string Menu_Url { get; set; }
+        public string Password { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string Menu_Level { get; set; }
+        public string AppConfig_Url { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int Menu_Type { get; set; }
+        public int AppConfig_Cycle { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int Menu_Sort { get; set; }
+        public int Type { get; set; }
 
+        /// <summary>
+        /// 运行时间
+        /// </summary>
+        public DateTime? RunTime { get; set; }
     }
 }

@@ -42,7 +42,7 @@ namespace WJ.Service
             catch (Exception ex)
             {
                 LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Debug.WriteLine(ex.Message);
                 return null;
             }
         }

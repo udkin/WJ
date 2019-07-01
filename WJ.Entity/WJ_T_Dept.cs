@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using SqlSugar;
 
 namespace WJ.Entity
 {
     ///<summary>
     ///部门表
     ///</summary>
+    [SugarTable("WJ_T_Dept")]
     public partial class WJ_T_Dept
     {
         public WJ_T_Dept()
         {
+
+
         }
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
+        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
 
         /// <summary>
@@ -62,8 +67,8 @@ namespace WJ.Entity
         public int Dept_Sort { get; set; }
 
         /// <summary>
-        /// Desc:创建时间
-        /// Default:
+        /// Desc:
+        /// Default:DateTime.Now
         /// Nullable:False
         /// </summary>
         public DateTime Dept_CreateTime { get; set; }

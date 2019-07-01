@@ -18,42 +18,42 @@ namespace WJ.Entity
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public int PlanId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public string Plan_Name { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public string Plan_Ranks { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public int AppId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public string App_Name { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public int PlanApp_Sort { get; set; }
 
     }

@@ -17,42 +17,42 @@ namespace WJ.Entity
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public int UserId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public int AppId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public string App_LoginUrl { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public string App_HomeUrl { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public string LoginName { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>           
+        /// </summary>
         public string Password { get; set; }
 
         /// <summary>

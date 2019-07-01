@@ -33,7 +33,7 @@ namespace WJ.DataService
         public static string Cookie { set; get; }
         //public static CookieContainer CookieContainers { set; get; }
 
-        public void Login()
+        public void SystemLogin()
         {
             string loginName = SystemMapService.Instance.GetMapValue("LoginName");
             string password = SystemMapService.Instance.GetMapValue("Password");

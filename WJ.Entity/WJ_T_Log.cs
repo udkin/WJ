@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using SqlSugar;
 
 namespace WJ.Entity
 {
     ///<summary>
     ///日志表
     ///</summary>
+    [SugarTable("WJ_T_Log")]
     public partial class WJ_T_Log
     {
         public WJ_T_Log()
         {
+
+
         }
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>           
+        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
 
         /// <summary>

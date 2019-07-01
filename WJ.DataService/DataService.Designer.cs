@@ -1,6 +1,6 @@
 ﻿namespace WJ.DataService
 {
-    partial class Service1
+    partial class DataService
     {
         /// <summary> 
         /// 必需的设计器变量。
@@ -28,8 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.ServiceName = "Service1";
+            // 
+            // DataService
+            // 
+            this.CanShutdown = true;
+            this.ServiceName = "WJDataServices";
+
         }
 
         #endregion

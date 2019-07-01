@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using WJ.API.Models;
 using WJ.Common;
@@ -52,6 +53,14 @@ namespace WJ.API.Controllers
                             //,RoleMenu = UserService.Instance.GetUserControllerName(userId)
                         };
                         string token = JWTService.Instance.CreateToken(authInfo);
+
+                        WJ_T_Token tokenInfo = new WJ_T_Token();
+                        tokenInfo.UserId = userId;
+                        tokenInfo.Token_Ip = ((System.Web.HttpContextWrapper)Request.Properties["MS_HttpContext"]).Request.UserHostAddress;
+                        tokenInfo.Token_CreateTime = authInfo.CreateTime;
+                        tokenInfo.Token_TimeLimit = authInfo.TokenTimeLimit;
+                        TokenService.Instance.Add(tokenInfo);
+
                         result = new { code = 0, success = 0, data = new { access_token = token } };
                     }
                 }

@@ -17,7 +17,7 @@ namespace WJ.DataService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new DataService()
             };
             ServiceBase.Run(ServicesToRun);
         }
