@@ -9,7 +9,7 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class AppConfigService
+    public class AppConfigService : DbContext<WJ_T_AppConfig>
     {
         #region 单列模式
         private static AppConfigService _instance = null;

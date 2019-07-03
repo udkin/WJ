@@ -13,9 +13,8 @@ namespace WJ.Entity
     {
         public WJ_T_Title()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -58,6 +57,5 @@ namespace WJ.Entity
         /// Nullable:False
         /// </summary>
         public int Title_State { get; set; }
-
     }
 }

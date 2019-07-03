@@ -8,7 +8,7 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class RoleService : ServiceBase
+    public class RoleService : DbContext<WJ_T_Role>
     {
         #region 单列模式
         private static RoleService _instance = null;

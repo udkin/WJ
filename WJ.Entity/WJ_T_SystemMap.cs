@@ -50,7 +50,7 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int SystemMap_Value { get; set; }
+        public string SystemMap_Value { get; set; }
 
         /// <summary>
         /// Desc:排序号

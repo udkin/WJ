@@ -9,7 +9,7 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class DeptService
+    public class DeptService : DbContext<WJ_T_Dept>
     {
         #region 单列模式
         private static DeptService _instance = null;

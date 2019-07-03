@@ -8,7 +8,7 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class SystemMapService
+    public class SystemMapService : DbContext<WJ_T_SystemMap>
     {
         #region 单列模式
         private static SystemMapService _instance = null;
@@ -36,7 +36,7 @@ namespace WJ.Service
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    value = db.Queryable<WJ_T_SystemMap>().Where(p => p.SystemMap_Type == mapType).Select(f => f.SystemMap_Value).First().ToString();
+                    value = db.Queryable<WJ_T_SystemMap>().Where(p => p.SystemMap_Type == mapType && p.SystemMap_State == 1).Select(f => f.SystemMap_Value).First().ToString();
                 }
             }
             catch (Exception ex)

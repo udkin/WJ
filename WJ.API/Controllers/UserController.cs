@@ -59,7 +59,7 @@ namespace WJ.API.Controllers
                         tokenInfo.Token_Ip = ((System.Web.HttpContextWrapper)Request.Properties["MS_HttpContext"]).Request.UserHostAddress;
                         tokenInfo.Token_CreateTime = authInfo.CreateTime;
                         tokenInfo.Token_TimeLimit = authInfo.TokenTimeLimit;
-                        TokenService.Instance.Add(tokenInfo);
+                        TokenService.Instance.Insert(tokenInfo);
 
                         result = new { code = 0, success = 0, data = new { access_token = token } };
                     }
@@ -136,7 +136,7 @@ namespace WJ.API.Controllers
                 }
                 else
                 {
-                    var user = UserService.Instance.GetUserInfo(authInfo.UserId);
+                    var user = UserService.Instance.GetById(authInfo.UserId);
                     result = new { code = 0, success = 0, data = user };
                 }
             }

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="AppConfigService.cs" />
     <Compile Include="AppService.cs" />
+    <Compile Include="DbContext.cs" />
     <Compile Include="MenuService.cs" />
     <Compile Include="SystemMapService.cs" />
     <Compile Include="TitleService.cs" />
@@ -59,7 +60,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DbHelper.cs" />
     <Compile Include="RoleService.cs" />
-    <Compile Include="ServiceBase.cs" />
     <Compile Include="TokenService.cs" />
     <Compile Include="UserService.cs" />
   </ItemGroup>

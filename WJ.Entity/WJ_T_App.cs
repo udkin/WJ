@@ -13,9 +13,8 @@ namespace WJ.Entity
     {
         public WJ_T_App()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:

@@ -8,7 +8,7 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class TokenService
+    public class TokenService : DbContext<WJ_T_Token>
     {
         #region 单列模式
         private static TokenService _instance = null;
@@ -28,49 +28,6 @@ namespace WJ.Service
             }
         }
         #endregion
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public bool Add(WJ_T_Token token)
-        {
-            try
-            {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Insertable<WJ_T_Token>(token).ExecuteCommandIdentityIntoEntity();
-                }
-            }
-            catch (Exception ex)
-            {
-                Common.LogHelper.ErrorLog(ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public bool Update(WJ_T_Token token)
-        {
-            try
-            {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    db.Updateable<WJ_T_Token>(token);
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Common.LogHelper.ErrorLog(ex.Message);
-                return false;
-            }
-        }
 
         /// <summary>
         /// 注销所有用户Token

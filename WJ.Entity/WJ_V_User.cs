@@ -11,9 +11,8 @@ namespace WJ.Entity
     {
         public WJ_V_User()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:

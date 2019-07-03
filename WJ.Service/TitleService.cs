@@ -8,7 +8,7 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class TitleService
+    public class TitleService : DbContext<WJ_T_Title>
     {
         #region 单列模式
         private static TitleService _instance = null;

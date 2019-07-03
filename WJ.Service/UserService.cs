@@ -9,7 +9,7 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class UserService
+    public class UserService : DbContext<WJ_T_User>
     {
         #region 单列模式
         private static UserService _instance = null;
@@ -56,30 +56,6 @@ namespace WJ.Service
                 Console.WriteLine(ex.Message);
             }
             return userId;
-        }
-        #endregion
-
-        #region 获取用户信息
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public WJ_T_User GetUserInfo(int id)
-        {
-            try
-            {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Queryable<WJ_T_User>().Where(p => p.Id == id).First();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
-                return null;
-            }
         }
         #endregion
 

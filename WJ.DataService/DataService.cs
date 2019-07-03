@@ -8,15 +8,11 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Thrift.Server;
-using Thrift.Transport;
 
 namespace WJ.DataService
 {
     public partial class DataService : ServiceBase
     {
-        Thread t;
-
         public DataService()
         {
             InitializeComponent();
