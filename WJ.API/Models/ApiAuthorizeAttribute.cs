@@ -26,7 +26,7 @@ namespace WJ.API.Models
                 AuthInfo authInfo = JWTService.Instance.DecodeToken(token);
                 if (authInfo != null || DateTime.Now >= authInfo.TokenTimeLimit)
                 {
-                    if (0 == authInfo.UserId)
+                    if (0 == authInfo.UserId || actionContext.Request.Method.Method == "GET")
                     {
                         actionContext.RequestContext.RouteData.Values.Add("access_token", authInfo);
                         base.IsAuthorized(actionContext);

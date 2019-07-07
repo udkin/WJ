@@ -17,49 +17,91 @@ namespace WJ.Entity
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int UserId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
+        public string User_Name { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public int AppClassId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
         public int AppId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
+        public string App_Name { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
+        public string App_Image { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string UserApp_LoginName { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string UserApp_Password { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
         public string App_LoginUrl { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string App_HomeUrl { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
-        public string LoginName { get; set; }
+        /// </summary>           
+        public string App_Method { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
-        /// Nullable:False
-        /// </summary>
-        public string Password { get; set; }
+        /// Nullable:True
+        /// </summary>           
+        public string App_Paramater { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:Form表单
         /// Default:
-        /// Nullable:False
-        /// </summary>    
-        public string App_Method { set; get; }
+        /// Nullable:True
+        /// </summary>
+        public string App_Form { get; set; }
     }
 }

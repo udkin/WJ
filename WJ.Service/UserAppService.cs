@@ -9,21 +9,21 @@ using WJ.Entity;
 
 namespace WJ.Service
 {
-    public class AppService : DbContext<WJ_T_App>
+    public class UserAppService : DbContext<WJ_T_UserApp>
     {
         #region 单列模式
-        private static AppService _instance = null;
+        private static UserAppService _instance = null;
 
-        private AppService() { }
+        private UserAppService() { }
 
-        public static AppService Instance
+        public static UserAppService Instance
         {
             get
             {
                 if (_instance == null)
-                    lock ("AppService")
+                    lock ("UserAppService")
                         if (_instance == null)
-                            _instance = new AppService();
+                            _instance = new UserAppService();
 
                 return _instance;
             }
@@ -36,13 +36,13 @@ namespace WJ.Service
         /// <param name="userId"></param>
         /// <param name="appId"></param>
         /// <returns></returns>
-        public WJ_V_UserApp GetAppLoginInfo(int userId, int appId)
+        public dynamic GetUserAppList(int userId)
         {
             try
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId && p.AppId == appId).First();
+                    return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppId, f.App_Name, f.App_Image }).ToList();
                 }
             }
             catch (Exception ex)

@@ -59,6 +59,54 @@ namespace WJ.Service
         }
         #endregion
 
+        #region 使用Token获取用户ID
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loginName"></param>
+        /// <returns></returns>
+        public WJ_T_User GetUserByToken(string token)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Queryable<WJ_T_User>().Where(p => p.User_Token == token).First();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ErrorLog(ex.Message);
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+        #endregion
+
+        #region 更新用户Token
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loginName"></param>
+        /// <returns></returns>
+        public bool UpdateUserToken(int userId, string token)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Updateable<WJ_T_User>().SetColumns(p => new WJ_T_User() { User_Token = token }).Where(p => p.Id == userId).ExecuteCommand() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ErrorLog(ex.Message);
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+        #endregion
+
         #region 获取后台管理员列表信息
         /// <summary>
         /// 
@@ -75,8 +123,8 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
                 LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
                 return null;
             }
         }

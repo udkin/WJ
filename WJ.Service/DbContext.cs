@@ -24,8 +24,6 @@ namespace WJ.Service
             {
                 System.Diagnostics.Debug.WriteLine(sql + "\r\n" + Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
                 System.Diagnostics.Debug.WriteLine("");
-                //Console.WriteLine(sql + "\r\n" + Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
-                //Console.WriteLine();
             };
         }
 

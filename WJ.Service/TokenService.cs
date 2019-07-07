@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WJ.Common;
 using WJ.Entity;
 
 namespace WJ.Service
@@ -44,7 +45,53 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
-                Common.LogHelper.ErrorLog(ex.Message);
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.ErrorLog(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 检查Token有效性
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public bool CheckToken(string token)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Ado.GetString(string.Format(@"select COUNT(1) from WJ_T_Token where Id in (select MAX(id) from WJ_T_Token 
+                                                        where UserId in (select Id from WJ_T_User where User_Token = '{0}'))
+                                                        and DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap 
+                                                        where SystemMap_Type = 'TokenTimeLimit'),Token_CreateTime) >= GETDATE()", token)) == "1";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.ErrorLog(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        public void UpdateTokenTimeLimit(string token)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    db.Ado.ExecuteCommand(string.Format("update WJ_T_Token set Token_TimeLimit = DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap where SystemMap_Type = 'TokenTimeLimit'),Token_TimeLimit) where Token_Value = ''",token));
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.ErrorLog(ex.Message);
             }
         }
     }

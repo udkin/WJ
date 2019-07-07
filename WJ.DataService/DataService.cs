@@ -25,6 +25,7 @@ namespace WJ.DataService
         protected override void OnStart(string[] args)
         {
             TimedDataService.Instance.Start();
+            AlarmService.Instance.Start();
         }
 
         /// <summary>
@@ -33,6 +34,7 @@ namespace WJ.DataService
         protected override void OnStop()
         {
             TimedDataService.Instance.Stop();
+            AlarmService.Instance.Stop();
         }
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace WJ.DataService
         protected override void OnShutdown()
         {
             TimedDataService.Instance.Stop();
+            AlarmService.Instance.Stop();
         }
     }
 }

@@ -87,6 +87,13 @@ namespace WJ.Entity
         public string App_Password { get; set; }
 
         /// <summary>
+        /// Desc:Form表单
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_Form { get; set; }
+
+        /// <summary>
         /// Desc:浏览器类型，1：IE，2：Chrome
         /// Default:1
         /// Nullable:False

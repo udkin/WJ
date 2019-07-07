@@ -1,21 +1,22 @@
-﻿using System;
+﻿using SqlSugar;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SqlSugar;
+using System.Threading.Tasks;
 
 namespace WJ.Entity
 {
     ///<summary>
-    ///
+    ///报警日志表
     ///</summary>
-    [SugarTable("WJ_T_Token")]
-    public partial class WJ_T_Token
+    [SugarTable("WJ_T_Alarm")]
+    public partial class WJ_T_Alarm
     {
-        public WJ_T_Token()
+        public WJ_T_Alarm()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -29,41 +30,27 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int UserId { get; set; }
+        public string Alarm_Name { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string Token_Ip { get; set; }
+        public int Alarm_Type { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string Token_Value { get; set; }
+        public byte[] Alarm_Data { get; set; }
 
         /// <summary>
         /// Desc:
-        /// Default:
+        /// Default:DateTime.Now
         /// Nullable:False
         /// </summary>
-        public DateTime Token_CreateTime { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public DateTime Token_TimeLimit { get; set; }
-
-        /// <summary>
-        /// Desc:状态，-1：废弃，1：正常
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public int Token_State { get; set; }
+        public DateTime Alarm_CreateTime { get; set; }
     }
 }

@@ -26,9 +26,14 @@ namespace WJ.API.Controllers
         /// <returns></returns>
         //[ValidateInput(false)]
         [AllowAnonymous]
-        [HttpPost]
+        //[AcceptVerbs("GET", "POST")]
+        //[HttpPost]
+        [HttpGet, HttpPost]
+        //public IHttpActionResult Login(dynamic request)
         public IHttpActionResult Login(dynamic request)
         {
+            //string userName = GetParamater("userName");
+            //string password = GetParamater("password");
             dynamic result = new { code = 0, success = -1, msg = "登录失败" };
             try
             {
@@ -42,7 +47,7 @@ namespace WJ.API.Controllers
                     if (userId > -1)
                     {
                         // Token有效期
-                        int tokenTimeLimit = int.Parse(ConfigHelper.Instance.WebSiteConfig["TokenTimeLimit"]);
+                        int tokenTimeLimit = int.Parse(SystemMapService.Instance.GetMapValue("TokenTimeLimit"));
 
                         AuthInfo authInfo = new AuthInfo()
                         {
