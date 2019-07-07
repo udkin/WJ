@@ -34,7 +34,7 @@ namespace WJ.API.Controllers
                 }
                 else
                 {
-                    dynamic userAppList = UserAppService.Instance.GetUserAppList(authInfo.UserId);
+                    dynamic userAppList = UserAppService.Instance.GetUserAppDynamic(authInfo.UserId);
                     result = new { code = 0, success = 0, data = userAppList };
                 }
             }

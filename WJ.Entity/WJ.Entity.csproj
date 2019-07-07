@@ -68,6 +68,7 @@
     <Compile Include="WJ_V_AppConfig.cs" />
     <Compile Include="WJ_V_User.cs" />
     <Compile Include="WJ_V_UserApp.cs" />
+    <Compile Include="WJ_V_UserAppClass.cs" />
     <Compile Include="WJ_V_UserPlanApp.cs" />
     <Compile Include="WJ_V_UserRoleMenu.cs" />
   </ItemGroup>

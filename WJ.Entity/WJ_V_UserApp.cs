@@ -39,6 +39,20 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>           
+        //public int AppClass_Name { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        //public int AppClass_Image { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
         public int AppId { get; set; }
 
         /// <summary>
@@ -103,5 +117,12 @@ namespace WJ.Entity
         /// Nullable:True
         /// </summary>
         public string App_Form { get; set; }
+
+        /// <summary>
+        /// Desc:浏览器类型，1：IE，2：Chrome
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public int App_BrowserType { set; get; }
     }
 }

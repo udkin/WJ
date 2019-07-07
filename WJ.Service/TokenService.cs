@@ -63,8 +63,7 @@ namespace WJ.Service
                 {
                     return db.Ado.GetString(string.Format(@"select COUNT(1) from WJ_T_Token where Id in (select MAX(id) from WJ_T_Token 
                                                         where UserId in (select Id from WJ_T_User where User_Token = '{0}'))
-                                                        and DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap 
-                                                        where SystemMap_Type = 'TokenTimeLimit'),Token_CreateTime) >= GETDATE()", token)) == "1";
+                                                        and Token_TimeLimit >= GETDATE() and Token_Value = '{0}'", token)) == "1";
                 }
             }
             catch (Exception ex)

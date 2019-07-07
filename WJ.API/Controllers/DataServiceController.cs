@@ -51,9 +51,9 @@ namespace WJ.API.Controllers
                         {
                             return Json<dynamic>(resultObj);
                         }
-                    }
 
-                    
+                        TokenService.Instance.UpdateTokenTimeLimit(token);
+                    }
 
                     MethodInfo method = this.GetType().GetMethod(requestData.Action.ToString());
                     if (action == "userlogin")
@@ -132,6 +132,60 @@ namespace WJ.API.Controllers
         }
         #endregion
 
+        #region 获取用户APP分类和APP列表
+        /// <summary>
+        /// 获取用户APP列表
+        /// </summary>
+        /// <param name="requestData"></param>
+        /// <returns></returns>
+        public dynamic GetAppClassAndAppList(WJ_T_User userInfo, dynamic requestData)
+        {
+            dynamic resultObj = new { Success = 0, Code = 0, ResultData = "", ErrorMsg = "获取用户APP列表失败" };
+            try
+            {
+                var appClassList = UserAppClassService.Instance.GetUserAppClass(userInfo.Id);
+                var appList = UserAppService.Instance.GetUserAppList(userInfo.Id);
+                List<dynamic> userAppClassAndAppList = new List<dynamic>();
+                Dictionary<int, List<dynamic>> appDict = new Dictionary<int, List<dynamic>>();
+
+                foreach (var item in appList)
+                {
+                    if (!appDict.ContainsKey(item.AppClassId))
+                    {
+                        appDict.Add(item.AppClassId, new List<dynamic>());
+                    }
+
+                    appDict[item.AppClassId].Add(new
+                    {
+                        AppId = item.AppId,
+                        App_Name = item.App_Name,
+                        App_Image = item.App_Image,
+                        App_BrowserType = item.App_BrowserType
+                    });
+                }
+
+                foreach (var appClass in appClassList)
+                {
+                    userAppClassAndAppList.Add(new
+                    {
+                        AppClassId = appClass.AppClassId,
+                        AppClass_Name = appClass.AppClass_Name,
+                        AppClass_Image = appClass.AppClass_Image,
+                        AppList = appDict[appClass.AppClassId]
+                    });
+                }
+                resultObj = new { Success = 1, Code = 1, ResultData = userAppClassAndAppList, ErrorMsg = "" };
+            }
+            catch (Exception ex)
+            {
+                resultObj = new { Success = 0, Code = 0, ResultData = "", ErrorMsg = ex.Message };
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
+            }
+            return resultObj;
+        }
+        #endregion
+
         #region 获取用户APP列表
         /// <summary>
         /// 获取用户APP列表
@@ -143,7 +197,7 @@ namespace WJ.API.Controllers
             dynamic resultObj = new { Success = 0, Code = 0, ResultData = "", ErrorMsg = "获取用户APP列表失败" };
             try
             {
-                dynamic userAppList = UserAppService.Instance.GetUserAppList(userInfo.Id);
+                dynamic userAppList = UserAppService.Instance.GetUserAppDynamic(userInfo.Id);
                 resultObj = new { Success = 1, Code = 1, ResultData = userAppList, ErrorMsg = "" };
             }
             catch (Exception ex)

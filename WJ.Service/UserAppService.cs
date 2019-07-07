@@ -36,13 +36,37 @@ namespace WJ.Service
         /// <param name="userId"></param>
         /// <param name="appId"></param>
         /// <returns></returns>
-        public dynamic GetUserAppList(int userId)
+        public List<WJ_V_UserApp> GetUserAppList(int userId)
         {
             try
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppId, f.App_Name, f.App_Image }).ToList();
+                    //return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppClassId, f.AppId, f.App_Name, f.App_Image, f.App_BrowserType }).ToList();
+                    return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ErrorLog(ex.Message);
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="appId"></param>
+        /// <returns></returns>
+        public dynamic GetUserAppDynamic(int userId)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppClassId, f.AppId, f.App_Name, f.App_Image, f.App_BrowserType }).ToList();
                 }
             }
             catch (Exception ex)
