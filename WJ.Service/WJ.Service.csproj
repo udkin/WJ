@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UserPlanAppService.cs" />
+    <Compile Include="UserPlanService.cs" />
     <Compile Include="UserAppClassService.cs" />
     <Compile Include="AppConfigService.cs" />
     <Compile Include="UserAppService.cs" />

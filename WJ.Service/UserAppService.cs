@@ -66,7 +66,7 @@ namespace WJ.Service
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppClassId, f.AppId, f.App_Name, f.App_Image, f.App_BrowserType }).ToList();
+                    return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppClassId, f.AppId, f.App_Name, f.App_Image, f.AppConfig_BrowserType, f.App_Type, f.App_Flag }).ToList();
                 }
             }
             catch (Exception ex)

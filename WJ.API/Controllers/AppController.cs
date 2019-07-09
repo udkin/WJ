@@ -36,20 +36,20 @@ namespace WJ.API.Controllers
             else
             {
                 //var content = string.Format("UserAccount={0}&Password={1}", appInfo.LoginName, appInfo.Password);//登录名和密码
-                var parameter = string.Format(appInfo.App_Paramater, appInfo.UserApp_LoginName, appInfo.UserApp_Password);//登录名和密码
+                var parameter = string.Format(appInfo.AppConfig_Paramater, appInfo.UserApp_LoginName, appInfo.UserApp_Password);//登录名和密码
 
                 HttpWebRequest request = null;
-                if (appInfo.App_Method.ToUpper() == "GET")
+                if (appInfo.AppConfig_Method.ToUpper() == "GET")
                 {
-                    request = (HttpWebRequest)HttpWebRequest.Create(appInfo.App_LoginUrl + "?" + parameter);//访问登录页
-                    request.Method = appInfo.App_Method;
+                    request = (HttpWebRequest)HttpWebRequest.Create(appInfo.AppConfig_LoginUrl + "?" + parameter);//访问登录页
+                    request.Method = appInfo.AppConfig_Method;
                     request.ContentType = "application/x-www-form-urlencoded";
                 }
                 else
                 {
                     var buf = Encoding.UTF8.GetBytes(parameter);
-                    request = (HttpWebRequest)HttpWebRequest.Create(appInfo.App_LoginUrl);//访问登录页
-                    request.Method = appInfo.App_Method;
+                    request = (HttpWebRequest)HttpWebRequest.Create(appInfo.AppConfig_LoginUrl);//访问登录页
+                    request.Method = appInfo.AppConfig_Method;
                     request.ContentType = "application/x-www-form-urlencoded";
                     request.ContentLength = buf.Length;
                     request.CookieContainer = new CookieContainer();
@@ -73,7 +73,7 @@ namespace WJ.API.Controllers
                 //HttpContext.Current.Response.Headers.Add("Cookie", session);
                 //HttpContext.Current.Response.Redirect(appInfo.App_HomeUrl);//跳转首页
 
-                request = (HttpWebRequest)HttpWebRequest.Create(new Uri(appInfo.App_HomeUrl));//具体session才能访问的页
+                request = (HttpWebRequest)HttpWebRequest.Create(new Uri(appInfo.AppConfig_HomeUrl));//具体session才能访问的页
                 request.Headers.Add("Cookie", session);
                 response = request.GetResponse() as HttpWebResponse;
                 var resStream = new StreamReader(response.GetResponseStream());//取到返回值

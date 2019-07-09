@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.Common", "WJ.Common\WJ.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.DataService", "WJ.DataService\WJ.DataService.csproj", "{522E6BEB-435B-45BC-9E14-E3969AB727F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.Business", "WJ.Business\WJ.Business.csproj", "{4814AA69-7F65-4ABB-9CB6-339FD6902552}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.VModel", "WJ.VModel\WJ.VModel.csproj", "{7070D680-1DCA-4687-935E-CAC6C3E71C3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{522E6BEB-435B-45BC-9E14-E3969AB727F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{522E6BEB-435B-45BC-9E14-E3969AB727F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{522E6BEB-435B-45BC-9E14-E3969AB727F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4814AA69-7F65-4ABB-9CB6-339FD6902552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4814AA69-7F65-4ABB-9CB6-339FD6902552}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4814AA69-7F65-4ABB-9CB6-339FD6902552}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4814AA69-7F65-4ABB-9CB6-339FD6902552}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7070D680-1DCA-4687-935E-CAC6C3E71C3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7070D680-1DCA-4687-935E-CAC6C3E71C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7070D680-1DCA-4687-935E-CAC6C3E71C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7070D680-1DCA-4687-935E-CAC6C3E71C3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

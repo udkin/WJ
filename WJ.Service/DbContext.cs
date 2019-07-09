@@ -39,7 +39,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public virtual bool Insert(T obj)
+        public virtual bool Add(T obj, SqlSugarClient db = null)
         {
             return CurrentDb.Insert(obj);
         }
@@ -49,7 +49,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public virtual bool Delete(T obj)
+        public virtual bool Delete(T obj, SqlSugarClient db = null)
         {
             return CurrentDb.Delete(obj);
         }
@@ -59,7 +59,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool DeleteById(dynamic id)
+        public virtual bool DeleteById(dynamic id, SqlSugarClient db = null)
         {
             return CurrentDb.DeleteById(id);
         }
@@ -69,7 +69,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool Update(T obj)
+        public virtual bool Update(T obj, SqlSugarClient db = null)
         {
             return CurrentDb.Update(obj);
         }
@@ -79,13 +79,13 @@ namespace WJ.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual T GetById(int id)
+        public virtual T GetById(int id, SqlSugarClient db = null)
         {
             return CurrentDb.GetById(id);
         }
 
         /// <summary>
-        /// 获取所有
+        /// 根据条件获取列表
         /// </summary>
         /// <returns></returns>
         public virtual List<T> GetList(Expression<Func<T, bool>> whereExpression)

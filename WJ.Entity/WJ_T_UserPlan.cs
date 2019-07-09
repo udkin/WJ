@@ -6,17 +6,15 @@ using SqlSugar;
 namespace WJ.Entity
 {
     ///<summary>
-    ///操作员所属应用表
-
+    ///方案信息表
     ///</summary>
-    [SugarTable("WJ_T_UserApp")]
-    public partial class WJ_T_UserApp
+    [SugarTable("WJ_T_UserPlan")]
+    public partial class WJ_T_UserPlan
     {
-        public WJ_T_UserApp()
+        public WJ_T_UserPlan()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -33,52 +31,59 @@ namespace WJ.Entity
         public int UserId { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:方案名称
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int AppClassId { get; set; }
+        public string UserPlan_Name { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:方案图标
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int AppId { get; set; }
+        public string UserPlan_Image { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:方案布局：（行，列）1,3
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string UserApp_LoginName { get; set; }
+        public string UserPlan_Layout { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:活动标志，0：不活动，1：活动
+        /// Default:1
+        /// Nullable:False
+        /// </summary>
+        public int UserPlan_Activate { get; set; }
+
+        /// <summary>
+        /// Desc:方案状态，-1：废弃，1：正常
+        /// Default:1
+        /// Nullable:False
+        /// </summary>
+        public int UserPlan_State { get; set; }
+
+        /// <summary>
+        /// Desc:方案状态，-1：废弃，1：正常
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string UserApp_Password { get; set; }
+        public DateTime UserPlan_CreateTime { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:0
         /// Nullable:False
         /// </summary>
-        public int UserApp_AppCount { get; set; }
+        public int UserPlan_UseCount { get; set; }
 
         /// <summary>
         /// Desc:
-        /// Default:DateTime.Now
+        /// Default:
         /// Nullable:False
         /// </summary>
-        public DateTime? UserApp_LastTime { get; set; }
-
-        /// <summary>
-        /// Desc:状态，-1：删除，1：正常
-        /// Default:1
-        /// Nullable:False
-        /// </summary>
-        public int UserApp_State { get; set; }
+        public DateTime? UserPlan_LastTime { get; set; }
     }
 }

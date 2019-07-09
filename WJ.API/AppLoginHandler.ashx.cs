@@ -20,20 +20,24 @@ namespace WJ.API
             HttpRequest request = context.Request;
             if (request.HttpMethod.ToLower() == "get")
             {
-                if (request["Token"] != "" && request["AppId"] != "")
+                if (!string.IsNullOrWhiteSpace(request["Token"]) && !string.IsNullOrWhiteSpace(request["AppId"]))
                 {
-                    if (TokenService.Instance.CheckToken(request["Token"]) == true)
+                    if (TokenService.Instance.CheckToken(request["Token"].Trim()) == true)
                     {
-                        WJ_T_User userInfo = UserService.Instance.GetUserByToken(request["Token"]);
+                        WJ_T_User userInfo = UserService.Instance.GetUserByToken(request["Token"].Trim());
                         if (userInfo != null)
                         {
-                            LoginApp(userInfo, request["AppId"]);
+                            LoginApp(userInfo, request["AppId"].Trim());
                         }
                         else
                         {
                             context.Response.Redirect("/404.html");
                         }
                     }
+                }
+                else
+                {
+                    context.Response.Redirect("/404.html");
                 }
             }
         }
@@ -56,7 +60,7 @@ namespace WJ.API
             }
             else
             {
-                HttpContext.Current.Response.Write(string.Format(appInfo.App_Form, appInfo.UserApp_LoginName, appInfo.UserApp_Password));
+                HttpContext.Current.Response.Write(string.Format(appInfo.AppConfig_Form, appInfo.UserApp_LoginName, appInfo.UserApp_Password));
             }
         }
     }

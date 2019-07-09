@@ -39,20 +39,6 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>           
-        //public int AppClass_Name { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        //public int AppClass_Image { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
         public int AppId { get; set; }
 
         /// <summary>
@@ -65,9 +51,58 @@ namespace WJ.Entity
         /// <summary>
         /// Desc:
         /// Default:
-        /// Nullable:True
+        /// Nullable:False
         /// </summary>           
         public string App_Image { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string App_Type { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string App_Flag { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string AppConfig_LoginUrl { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string AppConfig_HomeUrl { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string AppConfig_Method { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string AppConfig_Paramater { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string AppConfig_Form { get; set; }
 
         /// <summary>
         /// Desc:
@@ -88,41 +123,6 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public string App_LoginUrl { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public string App_HomeUrl { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public string App_Method { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>           
-        public string App_Paramater { get; set; }
-
-        /// <summary>
-        /// Desc:Form表单
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        public string App_Form { get; set; }
-
-        /// <summary>
-        /// Desc:浏览器类型，1：IE，2：Chrome
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        public int App_BrowserType { set; get; }
+        public int AppConfig_BrowserType { get; set; }
     }
 }

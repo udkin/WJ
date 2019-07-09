@@ -6,22 +6,21 @@ using SqlSugar;
 namespace WJ.Entity
 {
     ///<summary>
-    ///方案信息表
+    ///使用APP日志
     ///</summary>
-    [SugarTable("WJ_T_Plan")]
-    public partial class WJ_T_Plan
+    [SugarTable("WJ_T_UserAppLog")]
+    public partial class WJ_T_UserAppLog
     {
-        public WJ_T_Plan()
+        public WJ_T_UserAppLog()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
+        [SugarColumn(IsPrimaryKey = true)]
         public int Id { get; set; }
 
         /// <summary>
@@ -32,25 +31,24 @@ namespace WJ.Entity
         public int UserId { get; set; }
 
         /// <summary>
-        /// Desc:方案名称
+        /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string Plan_Name { get; set; }
+        public int AppId { get; set; }
 
         /// <summary>
-        /// Desc:方案布局：（行，列）1,3
+        /// Desc:使用次数
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string Plan_Ranks { get; set; }
+        public int UserAppLog_UseCount { get; set; }
 
         /// <summary>
-        /// Desc:方案状态，-1：废弃，1：正常
-        /// Default:1
-        /// Nullable:False
+        /// Desc:最后一次使用时间
+        /// Default:DateTime.Now
+        /// Nullable:True
         /// </summary>
-        public int Plan_State { get; set; }
-
+        public DateTime? UserAppLog_LastTime { get; set; }
     }
 }

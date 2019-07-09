@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WJ.Business
+namespace WJ.VModel
 {
-    public class Class1
+    public class ResultJson
     {
+        
     }
 }

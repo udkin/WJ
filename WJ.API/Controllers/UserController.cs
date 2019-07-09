@@ -64,7 +64,7 @@ namespace WJ.API.Controllers
                         tokenInfo.Token_Ip = ((System.Web.HttpContextWrapper)Request.Properties["MS_HttpContext"]).Request.UserHostAddress;
                         tokenInfo.Token_CreateTime = authInfo.CreateTime;
                         tokenInfo.Token_TimeLimit = authInfo.TokenTimeLimit;
-                        TokenService.Instance.Insert(tokenInfo);
+                        TokenService.Instance.Add(tokenInfo);
 
                         result = new { code = 0, success = 0, data = new { access_token = token } };
                     }

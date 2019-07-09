@@ -43,5 +43,13 @@ namespace WJ.API.Models
                 return null;
             }
         }
+
+        public void SetSuccessResult(ResultModel resultObj, dynamic resultData = null)
+        {
+            resultObj.Success = 1;
+            resultObj.Code = 1;
+            resultObj.ErrorMsg = "";
+            resultObj.ResultData = resultData;
+        }
     }
 }

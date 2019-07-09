@@ -1,21 +1,18 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 using SqlSugar;
 
 namespace WJ.Entity
 {
     ///<summary>
-    ///方案模块布局表
+    ///方案模块APP列表
     ///</summary>
-    [SugarTable("WJ_T_PlanApp")]
-    public partial class WJ_T_PlanApp
+    [SugarTable("WJ_T_UserPlanApp")]
+    public partial class WJ_T_UserPlanApp
     {
-        public WJ_T_PlanApp()
+        public WJ_T_UserPlanApp()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -29,7 +26,7 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        public int PlanId { get; set; }
+        public int UserPlanId { get; set; }
 
         /// <summary>
         /// Desc:应用ID
@@ -39,25 +36,17 @@ namespace WJ.Entity
         public int AppId { get; set; }
 
         /// <summary>
-        /// Desc:应用登录用户名
+        /// Desc:应用位置号，0_0，0_1
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string PlanApp_LoginUser { get; set; }
+        public string UserPlanApp_Location { get; set; }
 
         /// <summary>
-        /// Desc:应用登录密码
-        /// Default:
+        /// Desc:状态，-1：删除，1：正常
+        /// Default:1
         /// Nullable:False
         /// </summary>
-        public string PlanApp_Password { get; set; }
-
-        /// <summary>
-        /// Desc:顺序号
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public int PlanApp_Sort { get; set; }
-
+        public int UserPlanApp_State { get; set; }
     }
 }
