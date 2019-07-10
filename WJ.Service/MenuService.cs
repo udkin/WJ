@@ -151,13 +151,13 @@ namespace WJ.Service
         /// </summary>
         /// <param name="controllerName"></param>
         /// <returns></returns>
-        public bool AuthorizeController(string controllerName)
+        public bool AuthorizeController(int userId, string controllerName)
         {
             try
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    return db.Queryable<WJ_T_Menu>().Any(p => p.Menu_Control == controllerName);
+                    return db.Queryable<WJ_V_UserRoleMenu>().Any(p => p.Menu_Control == controllerName && p.UserId == userId);
                 }
             }
             catch (Exception ex)

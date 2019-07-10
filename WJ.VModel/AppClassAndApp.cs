@@ -23,6 +23,6 @@ namespace WJ.VModel
         /// <summary>
         /// 
         /// </summary>
-        public List<AppBase> AppList { get; set; }
+        //public List<AppBase> AppList { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace WJ.API.Controllers
     /// 
     /// </summary>
     [ApiAuthorize]
+    //[AuthFilter]
     public class UserController : ApiBaseController
     {
         #region 用户登录
@@ -24,17 +25,12 @@ namespace WJ.API.Controllers
         /// </summary>
         /// <param name="request">输入POST请求的JSON值{"UserName":"admin","Password":"123456"}</param>
         /// <returns></returns>
-        //[ValidateInput(false)]
         [AllowAnonymous]
-        //[AcceptVerbs("GET", "POST")]
-        //[HttpPost]
         [HttpGet, HttpPost]
-        //public IHttpActionResult Login(dynamic request)
-        public IHttpActionResult Login(dynamic request)
+        public IHttpActionResult Login([FromBody]dynamic request)
         {
-            //string userName = GetParamater("userName");
-            //string password = GetParamater("password");
-            dynamic result = new { code = 0, success = -1, msg = "登录失败" };
+            OPSResultData resultObj = new OPSResultData { success = 0, code = 0, msg = "" };
+            //dynamic result = new { code = 0, success = -1, msg = "登录失败" };
             try
             {
                 if (IsPropertyExist(request, "UserName") && IsPropertyExist(request, "Password"))
@@ -49,24 +45,22 @@ namespace WJ.API.Controllers
                         // Token有效期
                         int tokenTimeLimit = int.Parse(SystemMapService.Instance.GetMapValue("TokenTimeLimit"));
 
-                        AuthInfo authInfo = new AuthInfo()
-                        {
-                            UserId = userId,
-                            IsSuperAdmin = userId == 0,
-                            CreateTime = DateTime.Now,
-                            TokenTimeLimit = DateTime.Now.AddSeconds(tokenTimeLimit)
-                            //,RoleMenu = UserService.Instance.GetUserControllerName(userId)
-                        };
-                        string token = JWTService.Instance.CreateToken(authInfo);
+                        string prefix = SystemMapService.Instance.GetMapValue("TokenPrefix");
+                        string token = prefix + Guid.NewGuid().ToString().Replace("-", "");
 
+                        UserService.Instance.UpdateUserToken(userId, token);//更新用户Token
+
+                        #region 保存Token信息
                         WJ_T_Token tokenInfo = new WJ_T_Token();
                         tokenInfo.UserId = userId;
                         tokenInfo.Token_Ip = ((System.Web.HttpContextWrapper)Request.Properties["MS_HttpContext"]).Request.UserHostAddress;
-                        tokenInfo.Token_CreateTime = authInfo.CreateTime;
-                        tokenInfo.Token_TimeLimit = authInfo.TokenTimeLimit;
+                        tokenInfo.Token_Value = token;
+                        tokenInfo.Token_CreateTime = DateTime.Now;
+                        tokenInfo.Token_TimeLimit = DateTime.Now.AddSeconds(tokenTimeLimit);
                         TokenService.Instance.Add(tokenInfo);
+                        #endregion
 
-                        result = new { code = 0, success = 0, data = new { access_token = token } };
+                        SetSuccessOpsResult(resultObj, new { Access_Token = token });
                     }
                 }
             }
@@ -76,7 +70,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
         #endregion
 
@@ -85,32 +79,24 @@ namespace WJ.API.Controllers
         /// 获取用户权限菜单
         /// </summary>
         /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet]
+        [HttpGet, HttpPost]
         public IHttpActionResult GetUserRoleMenu()
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取菜单失败" };
+            OPSResultData resultObj = new OPSResultData { success = 1, code = 1, msg = "" };
             try
             {
-                AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
+                WJ_T_User userInfo = ControllerContext.RouteData.Values["UserInfo"] as WJ_T_User;
 
-                if (authInfo == null || DateTime.Now >= authInfo.TokenTimeLimit)
+                List<dynamic> menuList = null;
+                if (1 == userInfo.Id)
                 {
-                    result = new { code = 1001 };
+                    menuList = MenuService.Instance.GetSuperAdminMenu();
                 }
                 else
                 {
-                    List<dynamic> menuList = null;
-                    if (1 == authInfo.UserId)
-                    {
-                        menuList = MenuService.Instance.GetSuperAdminMenu();
-                    }
-                    else
-                    {
-                        menuList = MenuService.Instance.GetUserRoleMenu(authInfo.UserId);
-                    }
-                    result = new { code = 0, success = 0, data = menuList };
+                    menuList = MenuService.Instance.GetUserRoleMenu(userInfo.Id);
                 }
+                SetSuccessOpsResult(resultObj, menuList);
             }
             catch (Exception ex)
             {
@@ -118,7 +104,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
         #endregion
 
@@ -127,23 +113,15 @@ namespace WJ.API.Controllers
         /// 获取当前用户信息
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet, HttpPost]
         public IHttpActionResult GetUserInfo()
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
+            OPSResultData resultObj = new OPSResultData { success = 1, code = 1, msg = "" };
+            //dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
             try
             {
-                AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
-
-                if (authInfo == null || DateTime.Now >= authInfo.TokenTimeLimit)
-                {
-                    result = new { code = 1001 };
-                }
-                else
-                {
-                    var user = UserService.Instance.GetById(authInfo.UserId);
-                    result = new { code = 0, success = 0, data = user };
-                }
+                WJ_T_User userInfo = ControllerContext.RouteData.Values["UserInfo"] as WJ_T_User;
+                SetSuccessOpsResult(resultObj, userInfo);
             }
             catch (Exception ex)
             {
@@ -151,7 +129,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
         #endregion
 
@@ -160,33 +138,26 @@ namespace WJ.API.Controllers
         /// 获取后台管理员列表信息
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        public IHttpActionResult GetManagerList(dynamic request)
+        [HttpGet, HttpPost]
+        public IHttpActionResult GetManagerList([FromBody]dynamic request)
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
+            OPSResultData resultObj = new OPSResultData { success = 1, code = 1, msg = "" };
+            //dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
             try
             {
-                AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
-
-                if (authInfo == null || DateTime.Now >= authInfo.TokenTimeLimit)
+                List<WJ_V_User> managerList = null;
+                if (IsPropertyExist(request, "page") && IsPropertyExist(request, "limit"))
                 {
-                    result = new { code = 1001 };
+                    int page = request.page;
+                    int limit = request.limit;
+                    managerList = UserService.Instance.GetManagerList(page, limit);
                 }
                 else
                 {
-                    List<WJ_V_User> managerList = null;
-                    if (IsPropertyExist(request, "page") && IsPropertyExist(request, "limit"))
-                    {
-                        int page = request.page;
-                        int limit = request.limit;
-                        managerList = UserService.Instance.GetManagerList(page, limit);
-                    }
-                    else
-                    {
-                        managerList = UserService.Instance.GetManagerList();
-                    }
-                    result = new { code = 0, success = 0, data = managerList };
+                    managerList = UserService.Instance.GetManagerList();
                 }
+                //result = new { code = 0, success = 0, data = managerList };
+                SetSuccessOpsResult(resultObj, managerList);
             }
             catch (Exception ex)
             {
@@ -194,7 +165,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
         #endregion
 
@@ -203,23 +174,16 @@ namespace WJ.API.Controllers
         /// 
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet, HttpPost]
         public IHttpActionResult GetUserList()
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
+            OPSResultData resultObj = new OPSResultData { success = 1, code = 1, msg = "" };
+            //dynamic result = new { code = 0, success = 1, msg = "获取用户信息失败" };
             try
             {
-                AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
-
-                if (authInfo == null || DateTime.Now >= authInfo.TokenTimeLimit)
-                {
-                    result = new { code = 1001 };
-                }
-                else
-                {
-                    var menuList = UserService.Instance.GetUserList();
-                    result = new { code = 0, success = 0, data = menuList };
-                }
+                var menuList = UserService.Instance.GetUserList();
+                //result = new { code = 0, success = 0, data = menuList };
+                SetSuccessOpsResult(resultObj, menuList);
             }
             catch (Exception ex)
             {
@@ -227,7 +191,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
         #endregion
     }

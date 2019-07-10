@@ -39,7 +39,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public virtual bool Add(T obj, SqlSugarClient db = null)
+        public virtual bool Add(T obj)
         {
             return CurrentDb.Insert(obj);
         }
@@ -49,7 +49,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public virtual bool Delete(T obj, SqlSugarClient db = null)
+        public virtual bool Delete(T obj)
         {
             return CurrentDb.Delete(obj);
         }
@@ -59,7 +59,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool DeleteById(dynamic id, SqlSugarClient db = null)
+        public virtual bool DeleteById(dynamic id)
         {
             return CurrentDb.DeleteById(id);
         }
@@ -69,7 +69,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool Update(T obj, SqlSugarClient db = null)
+        public virtual bool Update(T obj)
         {
             return CurrentDb.Update(obj);
         }
@@ -79,7 +79,7 @@ namespace WJ.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual T GetById(int id, SqlSugarClient db = null)
+        public virtual T GetById(int id)
         {
             return CurrentDb.GetById(id);
         }

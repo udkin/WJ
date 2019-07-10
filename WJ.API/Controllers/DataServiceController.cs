@@ -47,7 +47,7 @@ namespace WJ.API.Controllers
                             return Json<dynamic>(resultObj);
                         }
 
-                        TokenService.Instance.UpdateTokenTimeLimit(token);
+                        TokenService.Instance.UpdateTokenTimeLimit(token);//更新Token有效时间
                     }
 
                     MethodInfo method = this.GetType().GetMethod(requestData.Action.ToString().Trim());

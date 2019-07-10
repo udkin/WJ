@@ -16,10 +16,17 @@ namespace WJ.API.Models
 {
     public class ApiBaseController : ApiController
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public WJ_T_User UserInfo { set; get; }
+
         protected override void Initialize(HttpControllerContext controllerContext)
         {
             //初始化请求上下文
             base.Initialize(controllerContext);
+
+            //UserInfo = this.RequestContext.RouteData.Values["UserInfo"] as WJ_T_User;
         }
 
         public bool IsPropertyExist(dynamic data, string propertyname)
@@ -50,6 +57,14 @@ namespace WJ.API.Models
             resultObj.Code = 1;
             resultObj.ErrorMsg = "";
             resultObj.ResultData = resultData;
+        }
+
+        public void SetSuccessOpsResult(OPSResultData resultObj, dynamic resultData = null)
+        {
+            resultObj.success = 0;
+            resultObj.code = 0;
+            resultObj.msg = "";
+            resultObj.data = resultData;
         }
     }
 }

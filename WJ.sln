@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.DataService", "WJ.DataSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.VModel", "WJ.VModel\WJ.VModel.csproj", "{7070D680-1DCA-4687-935E-CAC6C3E71C3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WJ.Web", "WJ.Web\WJ.Web.csproj", "{14CC1F44-70CC-4F95-B6C3-FDBFDF79D41C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{7070D680-1DCA-4687-935E-CAC6C3E71C3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7070D680-1DCA-4687-935E-CAC6C3E71C3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7070D680-1DCA-4687-935E-CAC6C3E71C3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14CC1F44-70CC-4F95-B6C3-FDBFDF79D41C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14CC1F44-70CC-4F95-B6C3-FDBFDF79D41C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14CC1F44-70CC-4F95-B6C3-FDBFDF79D41C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14CC1F44-70CC-4F95-B6C3-FDBFDF79D41C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

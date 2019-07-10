@@ -8,6 +8,8 @@ using System.Text;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Controllers;
+using System.Web.Http.Filters;
+using WJ.Entity;
 using WJ.Service;
 
 namespace WJ.API.Models
@@ -22,22 +24,23 @@ namespace WJ.API.Models
             if (authHeader != null && string.IsNullOrWhiteSpace(authHeader.FirstOrDefault()) == false)
             {
                 string token = authHeader.FirstOrDefault();
-                //对token进行解密
-                AuthInfo authInfo = JWTService.Instance.DecodeToken(token);
-                if (authInfo != null || DateTime.Now >= authInfo.TokenTimeLimit)
+
+                if (TokenService.Instance.CheckToken(token))
                 {
-                    if (0 == authInfo.UserId || actionContext.Request.Method.Method == "GET")
+                    WJ_T_User userInfo = UserService.Instance.GetUserByToken(token);//通过Token获取用户信息
+                    TokenService.Instance.UpdateTokenTimeLimit(token);//更新Token有效时间
+
+                    if (userInfo.Id == 1)//默认用户为超级管理员
                     {
-                        actionContext.RequestContext.RouteData.Values.Add("access_token", authInfo);
+                        actionContext.RequestContext.RouteData.Values.Add("UserInfo", userInfo);
                         base.IsAuthorized(actionContext);
                     }
                     else
                     {
                         string controllerName = actionContext.ControllerContext.ControllerDescriptor.ControllerName.ToLower();
-                        // 有访问控制器权继续处理，否则返回401
-                        if (MenuService.Instance.AuthorizeController(controllerName))
+                        if (MenuService.Instance.AuthorizeController(userInfo.Id, controllerName))
                         {
-                            actionContext.RequestContext.RouteData.Values.Add("access_token", authInfo);
+                            actionContext.RequestContext.RouteData.Values.Add("UserInfo", userInfo);
                             base.IsAuthorized(actionContext);
                         }
                         else
@@ -79,7 +82,16 @@ namespace WJ.API.Models
             var response = filterContext.Response = filterContext.Response ?? new HttpResponseMessage();
             //response.StatusCode = HttpStatusCode.Forbidden; // 403未通过授权
             response.StatusCode = HttpStatusCode.OK; // 200
-            response.Content = new StringContent(JsonConvert.SerializeObject(new { code = 1001 }), Encoding.UTF8, "application/json");
+            string controllerName = filterContext.ControllerContext.ControllerDescriptor.ControllerName.ToLower();
+
+            if(controllerName== "DataService")
+            {
+                response.Content = new StringContent(JsonConvert.SerializeObject(new ResultModel() { Code = 1001 }), Encoding.UTF8, "application/json");
+            }
+            else
+            {
+                response.Content = new StringContent(JsonConvert.SerializeObject(new OPSResultData() { code = 1001 }), Encoding.UTF8, "application/json");
+            }
         }
 
         #region MyRegion
