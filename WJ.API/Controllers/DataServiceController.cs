@@ -25,7 +25,7 @@ namespace WJ.API.Controllers
         /// <param name="requestData"></param>
         /// <returnsJSON结果集</returns>
         [HttpGet, HttpPost]
-        public dynamic GetData([FromBody]dynamic requestData)
+        public dynamic GetData(dynamic requestData)
         {
             WJ_T_User userInfo = null;
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "无效身份证凭证" };
@@ -97,7 +97,7 @@ namespace WJ.API.Controllers
                 if (userId > -1)
                 {
                     // Token有效期
-                    int tokenTimeLimit = int.Parse(SystemMapService.Instance.GetMapValue("TokenTimeLimit"));
+                    int tokenTimeLimit = SystemMapService.Instance.GetMapValueToInt("TokenTimeLimit");
 
                     string prefix = SystemMapService.Instance.GetMapValue("TokenPrefix1");
                     string token = prefix + Guid.NewGuid().ToString().Replace("-", "");

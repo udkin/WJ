@@ -82,16 +82,7 @@ namespace WJ.API.Models
             var response = filterContext.Response = filterContext.Response ?? new HttpResponseMessage();
             //response.StatusCode = HttpStatusCode.Forbidden; // 403未通过授权
             response.StatusCode = HttpStatusCode.OK; // 200
-            string controllerName = filterContext.ControllerContext.ControllerDescriptor.ControllerName.ToLower();
-
-            if(controllerName== "DataService")
-            {
-                response.Content = new StringContent(JsonConvert.SerializeObject(new ResultModel() { Code = 1001 }), Encoding.UTF8, "application/json");
-            }
-            else
-            {
-                response.Content = new StringContent(JsonConvert.SerializeObject(new OPSResultData() { code = 1001 }), Encoding.UTF8, "application/json");
-            }
+            response.Content = new StringContent(JsonConvert.SerializeObject(new ResultModel() { Code = 1001 }), Encoding.UTF8, "application/json");
         }
 
         #region MyRegion

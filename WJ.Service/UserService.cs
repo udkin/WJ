@@ -30,9 +30,9 @@ namespace WJ.Service
         }
         #endregion
 
-        #region 验证用户登录信息
+        #region 用户登录、退出
         /// <summary>
-        /// 
+        /// 用户便当
         /// </summary>
         /// <param name="loginName"></param>
         /// <returns></returns>
@@ -56,6 +56,28 @@ namespace WJ.Service
                 Console.WriteLine(ex.Message);
             }
             return userId;
+        }
+
+        /// <summary>
+        /// 退出登录
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public bool LogOut(string token)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Updateable<WJ_T_User>(p=> new WJ_T_User() { User_Token = "" }).Where(p => p.User_Token == token ).ExecuteCommand() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ErrorLog(ex.Message);
+                Console.WriteLine(ex.Message);
+            }
+            return false;
         }
         #endregion
 
@@ -149,6 +171,31 @@ namespace WJ.Service
                 LogHelper.ErrorLog(ex.Message);
                 Console.WriteLine(ex.Message);
                 return null;
+            }
+        }
+        #endregion
+
+        #region 删除用户信息
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public bool DeleteUser(int id)
+        {
+            try
+            {
+                using (SqlSugarClient db = DbHelper.GetInstance())
+                {
+                    return db.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.Id == id).ExecuteCommand() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ErrorLog(ex.Message);
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
         #endregion

@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppClassService.cs" />
+    <Compile Include="AppDataService.cs" />
     <Compile Include="UserPlanAppService.cs" />
     <Compile Include="UserPlanService.cs" />
     <Compile Include="UserAppClassService.cs" />
@@ -65,6 +67,7 @@
     <Compile Include="DbHelper.cs" />
     <Compile Include="RoleService.cs" />
     <Compile Include="TokenService.cs" />
+    <Compile Include="UserRoleService.cs" />
     <Compile Include="UserService.cs" />
   </ItemGroup>
   <ItemGroup>

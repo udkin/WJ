@@ -11,17 +11,17 @@ using WJ.Service;
 namespace WJ.API.Controllers
 {
     [ApiAuthorize]
-    public class DeptController : ApiController
+    public class DeptController : ApiBaseController
     {
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet, HttpPost]
         public IHttpActionResult GetAllDeptList(dynamic request)
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取部门信息失败" };
+            ResultModel resultObj = GetResultInstance();
             try
             {
                 var deptList = DeptService.Instance.GetAllDeptList();
-                result = new { code = 0, success = 0, data = deptList };
+                SetSuccessResult(resultObj, deptList);
             }
             catch (Exception ex)
             {
@@ -29,7 +29,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
     }
 }

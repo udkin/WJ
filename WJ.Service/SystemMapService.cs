@@ -46,5 +46,12 @@ namespace WJ.Service
             }
             return value;
         }
+
+        public int GetMapValueToInt(string mapType)
+        {
+            int result = 0;
+            int.TryParse(GetMapValue(mapType),out result);
+            return result;
+        }
     }
 }

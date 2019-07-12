@@ -52,7 +52,8 @@ namespace WJ.API
 
         public void LoginApp(WJ_T_User userInfo, string appId)
         {
-            var appInfo = AppService.Instance.GetAppLoginInfo(userInfo.Id, Convert.ToInt32(appId));
+            var appInfo = new DbContext<WJ_V_UserApp>().GetSingle(p => p.UserId == userInfo.Id && p.AppId == Convert.ToInt32(appId));
+            //var appInfo = AppService.Instance.GetAppLoginInfo(userInfo.Id, Convert.ToInt32(appId));
             HttpContext.Current.Response.ContentType = "text/html";
             if (appInfo == null)
             {

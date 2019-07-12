@@ -14,17 +14,17 @@ namespace WJ.API.Controllers
     /// 职务控制器
     /// </summary>
     [ApiAuthorize]
-    public class TitleController : ApiController
+    public class TitleController : ApiBaseController
     {
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet, HttpPost]
         public IHttpActionResult GetAllTitleList(dynamic request)
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取职务信息失败" };
+            ResultModel resultObj = GetResultInstance();
             try
             {
-                var roleList = TitleService.Instance.GetAllTitleList();
-                result = new { code = 0, success = 0, data = roleList };
+                var titleList = TitleService.Instance.GetAllTitleList();
+                SetSuccessResult(resultObj, titleList);
             }
             catch (Exception ex)
             {
@@ -32,7 +32,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
     }
 }

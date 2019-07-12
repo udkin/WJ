@@ -14,17 +14,17 @@ namespace WJ.API.Controllers
     /// 
     /// </summary>
     [ApiAuthorize]
-    public class RoleController : ApiController
+    public class RoleController : ApiBaseController
     {
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet, HttpPost]
         public IHttpActionResult GetAllRoleList(dynamic request)
         {
-            dynamic result = new { code = 0, success = 1, msg = "获取角色信息失败" };
+            ResultModel resultObj = GetResultInstance();
             try
             {
                 var roleList = RoleService.Instance.GetAllRoleList();
-                result = new { code = 0, success = 0, data = roleList };
+                SetSuccessResult(resultObj, roleList);
             }
             catch (Exception ex)
             {
@@ -32,7 +32,7 @@ namespace WJ.API.Controllers
                 LogHelper.DebugLog(ex.Message, LogType.Controller);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
         }
     }
 }

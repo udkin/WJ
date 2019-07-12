@@ -16,10 +16,24 @@ namespace WJ.API.Models
 {
     public class ApiBaseController : ApiController
     {
+        #region 属性
+        private WJ_T_User _userInfo= null;
         /// <summary>
         /// 
         /// </summary>
-        public WJ_T_User UserInfo { set; get; }
+        public WJ_T_User UserInfo
+        {
+            get
+            {
+                if (_userInfo == null)
+                    lock ("GetUser")
+                        if (_userInfo == null)
+                            _userInfo = ControllerContext.RouteData.Values["UserInfo"] as WJ_T_User;
+                return _userInfo;
+            }
+        }
+        #endregion
+
 
         protected override void Initialize(HttpControllerContext controllerContext)
         {
@@ -51,6 +65,12 @@ namespace WJ.API.Models
             }
         }
 
+        public ResultModel GetResultInstance(string msg = "")
+        {
+            return new ResultModel { Success = 0, Code = 0, ErrorMsg = msg };
+        }
+
+
         public void SetSuccessResult(ResultModel resultObj, dynamic resultData = null)
         {
             resultObj.Success = 1;
@@ -59,12 +79,11 @@ namespace WJ.API.Models
             resultObj.ResultData = resultData;
         }
 
-        public void SetSuccessOpsResult(OPSResultData resultObj, dynamic resultData = null)
+        public void SetFailResult(ResultModel resultObj, string errorMsg = "")
         {
-            resultObj.success = 0;
-            resultObj.code = 0;
-            resultObj.msg = "";
-            resultObj.data = resultData;
+            resultObj.Success = 0;
+            resultObj.Code = 1;
+            resultObj.ErrorMsg = errorMsg;
         }
     }
 }

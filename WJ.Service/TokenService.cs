@@ -84,7 +84,7 @@ namespace WJ.Service
             {
                 using (SqlSugarClient db = DbHelper.GetInstance())
                 {
-                    db.Ado.ExecuteCommand(string.Format("update WJ_T_Token set Token_TimeLimit = DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap where SystemMap_Type = 'TokenTimeLimit'),Token_TimeLimit) where Token_Value = ''",token));
+                    db.Ado.ExecuteCommand(string.Format("update WJ_T_Token set Token_TimeLimit = DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap where SystemMap_Type = 'TokenTimeLimit'),GETDATE()) where Token_Value = '{0}'", token));
                 }
             }
             catch (Exception ex)

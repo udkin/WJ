@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using WJ.Common;
 
 namespace WJ.Service
 {
@@ -34,6 +35,7 @@ namespace WJ.Service
         public SimpleClient<T> CurrentDb { get { return new SimpleClient<T>(Db); } }//用来处理T表的常用操作
 
         #region 公用方法
+        #region 新增
         /// <summary>
         /// 新增
         /// </summary>
@@ -45,6 +47,19 @@ namespace WJ.Service
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public virtual int Add(T obj, SqlSugarClient db)
+        {
+            return db.Insertable(obj).ExecuteReturnIdentity();
+        }
+        #endregion
+
+        #region 删除
+        /// <summary>
         /// 根据实体对象删除
         /// </summary>
         /// <param name="obj"></param>
@@ -52,6 +67,16 @@ namespace WJ.Service
         public virtual bool Delete(T obj)
         {
             return CurrentDb.Delete(obj);
+        }
+
+        /// <summary>
+        /// 根据实体对象删除
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public virtual bool Delete(T obj, SqlSugarClient db)
+        {
+            return db.Deleteable<T>().Where(obj).ExecuteCommand() > 0;
         }
 
         /// <summary>
@@ -65,14 +90,45 @@ namespace WJ.Service
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public virtual bool DeleteById(dynamic id, SqlSugarClient db)
+        {
+            return db.Deleteable<T>().In(id).ExecuteCommand() > 0;
+        }
+        #endregion
+
+        #region 更新
+        /// <summary>
         /// 更新
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool Update(T obj)
+        public virtual bool Update(T obj, bool isNullColumn = false)
         {
-            return CurrentDb.Update(obj);
+            if(isNullColumn)
+            {
+                return Db.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
+            }
+            else
+            {
+                return CurrentDb.Update(obj);
+            }
         }
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual bool Update(T obj, SqlSugarClient db)
+        {
+            return db.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
+        }
+        #endregion
 
         /// <summary>
         /// 根据ID查询返回实体对象
@@ -85,12 +141,45 @@ namespace WJ.Service
         }
 
         /// <summary>
+        /// 根据ID查询返回实体对象
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual T GetById(int id, SqlSugarClient db)
+        {
+            return db.Queryable<T>().InSingle(id);
+        }
+
+        /// <summary>
+        /// 根据参数值查询返回实体对象
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual T GetSingle(Expression<Func<T, bool>> whereExpression)
+        {
+            return CurrentDb.GetSingle(whereExpression);
+        }
+
+        /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <returns></returns>
         public virtual List<T> GetList(Expression<Func<T, bool>> whereExpression)
         {
             return CurrentDb.GetList(whereExpression);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="whereExpression"></param>
+        /// <returns></returns>
+        public bool IsExits(Expression<Func<T, bool>> whereExpression)
+        {
+            using (SqlSugarClient db = DbHelper.GetInstance())
+            {
+                return db.Queryable<T>().Any(whereExpression);
+            }
         }
         #endregion
     }

@@ -294,7 +294,7 @@ namespace WJ.DataService
         /// <returns></returns>
         public void CycleCallSession()
         {
-            int cycleTime = int.Parse(SystemMapService.Instance.GetMapValue("CycleCallSession")) * 1000;
+            int cycleTime = SystemMapService.Instance.GetMapValueToInt("CycleCallSession") * 1000;
             while (true)
             {
                 callSessionEvent.WaitOne(cycleTime);//暂停时间

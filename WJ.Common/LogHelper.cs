@@ -29,7 +29,7 @@ namespace WJ.Common
                 try
                 {
                     string LogName = DateTime.Now.ToString("yyyyMMdd") + string.Format("_{0}.txt", type.ToString()); //按天日志
-                    string logfile = HttpRuntime.AppDomainAppPath.ToString() + "log/" + LogName;
+                    string logfile = HttpRuntime.AppDomainAppPath.ToString() + "log\\" + LogName;
                     System.IO.StreamWriter sw = System.IO.File.AppendText(logfile);
                     sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + ":" + log);
                     sw.WriteLine("---------------");

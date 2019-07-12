@@ -9,6 +9,7 @@ using System.Web;
 using System.Web.Http;
 using WJ.API.Models;
 using WJ.Common;
+using WJ.Entity;
 using WJ.Service;
 
 namespace WJ.API.Controllers
@@ -25,8 +26,7 @@ namespace WJ.API.Controllers
         public HttpResponseMessage PlatformLogin()
         {
             int appId = 1;
-            AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
-            var appInfo = AppService.Instance.GetAppLoginInfo(authInfo.UserId, appId);
+            var appInfo = new DbContext<WJ_V_UserApp>().GetSingle(p => p.UserId == UserInfo.Id && p.AppId == Convert.ToInt32(appId));
             if (appInfo == null)
             {
                 HttpResponseMessage redirectResponse = new HttpResponseMessage(HttpStatusCode.Moved);
