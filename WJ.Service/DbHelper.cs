@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WJ.Common;
 
 namespace WJ.Service
 {
@@ -25,7 +26,7 @@ namespace WJ.Service
             //Print sql
             db.Aop.OnLogExecuting = (sql, pars) =>
             {
-                System.Diagnostics.Debug.WriteLine(sql + "\r\n" + db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
+                LogHelper.DbSqlLog(sql + "\r\n" + db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
             };
             return db;
         }

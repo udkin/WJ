@@ -81,6 +81,13 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        public int RoleId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
         public int User_Type { get; set; }
 
         /// <summary>

@@ -3,6 +3,6 @@
     <!--超级管理员密码-->
     <item key="SuperPassword" value="wjadmin"></item>
     <!--Token有效时间，单位秒-->
-    <item key="TokenTimeLimit" value="7200"></item>
+    <item key="WriteSql" value="false"></item>
   </Config>
 </Root>

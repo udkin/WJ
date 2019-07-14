@@ -38,15 +38,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     db.Updateable<WJ_T_Token>().SetColumns(p => new WJ_T_Token() { Token_State = 0 }).Where(p => p.UserId == userId && p.Token_State == 1).ExecuteCommand();
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
             }
         }
 
@@ -59,17 +58,16 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     return db.Ado.GetString(string.Format(@"select COUNT(1) from WJ_T_Token where Id in (select MAX(id) from WJ_T_Token 
-                                                        where UserId in (select Id from WJ_T_User where User_Token = '{0}'))
+                                                        where UserId in (select Id from WJ_T_User where User_Token = '{0}' and User_State = 1))
                                                         and Token_TimeLimit >= GETDATE() and Token_Value = '{0}'", token)) == "1";
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return false;
             }
         }
@@ -82,15 +80,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     db.Ado.ExecuteCommand(string.Format("update WJ_T_Token set Token_TimeLimit = DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap where SystemMap_Type = 'TokenTimeLimit'),GETDATE()) where Token_Value = '{0}'", token));
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
             }
         }
     }

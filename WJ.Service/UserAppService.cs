@@ -40,7 +40,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     //return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppClassId, f.AppId, f.App_Name, f.App_Image, f.App_BrowserType }).ToList();
                     return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).ToList();
@@ -48,8 +48,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }
@@ -64,15 +63,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppClassId, f.AppId, f.App_Name, f.App_Image, f.AppConfig_BrowserType, f.App_Type, f.App_Flag }).ToList();
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }

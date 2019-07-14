@@ -24,7 +24,7 @@ namespace WJ.API
                 {
                     if (TokenService.Instance.CheckToken(request["Token"].Trim()) == true)
                     {
-                        WJ_T_User userInfo = UserService.Instance.GetUserByToken(request["Token"].Trim());
+                        WJ_T_User userInfo = new DbContext<WJ_T_User>().GetSingle(p => p.User_Token == request["Token"].Trim() && p.User_State == 1);
                         if (userInfo != null)
                         {
                             LoginApp(userInfo, request["AppId"].Trim());

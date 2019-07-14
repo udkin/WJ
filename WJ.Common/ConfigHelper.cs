@@ -38,7 +38,7 @@ namespace WJ.Common
         /// <summary>
         /// 
         /// </summary>
-        public Dictionary<string, string> WebSiteConfig { set; get; }
+        public static Dictionary<string, string> WebSiteConfig { set; get; }
         #endregion
 
         #region 填充网站配置信息
@@ -46,7 +46,7 @@ namespace WJ.Common
         /// 填充回复用户消息
         /// </summary>
         /// <param name="dictUserMessage"></param>
-        public void FillWebSiteConfig()
+        public static void FillWebSiteConfig()
         {
             WebSiteConfig = null;
             try

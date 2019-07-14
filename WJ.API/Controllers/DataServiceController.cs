@@ -71,7 +71,7 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 resultObj.ErrorMsg = ex.Message;
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.ControllerErrorLog(ex.Message);
             }
 
             return Json<dynamic>(resultObj);
@@ -118,8 +118,7 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 resultObj.ErrorMsg = ex.Message;
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
+                LogHelper.ControllerErrorLog(ex.Message);
             }
             return resultObj;
         }

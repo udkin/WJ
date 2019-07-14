@@ -13,26 +13,32 @@ namespace WJ.Service
     {
         public DbContext()
         {
-            Db = new SqlSugarClient(new ConnectionConfig()
-            {
-                ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Defalut"].ConnectionString,
-                DbType = DbType.SqlServer,
-                InitKeyType = InitKeyType.Attribute,//从特性读取主键和自增列信息
-                IsAutoCloseConnection = true,//开启自动释放模式和EF原理一样我就不多解释了
-            });
-            //调式代码 用来打印SQL 
-            Db.Aop.OnLogExecuting = (sql, pars) =>
-            {
-                System.Diagnostics.Debug.WriteLine(sql + "\r\n" + Db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
-                System.Diagnostics.Debug.WriteLine("");
-            };
+
         }
 
         //注意：不能写成静态的
-        public SqlSugarClient Db;//用来处理事务多表查询和复杂的操作
+        public SqlSugarClient DbInstance//用来处理事务多表查询和复杂的操作
+        {
+            get
+            {
+                SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
+                {
+                    ConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Defalut"].ConnectionString,
+                    DbType = DbType.SqlServer,
+                    InitKeyType = InitKeyType.Attribute,//从特性读取主键和自增列信息
+                    IsAutoCloseConnection = true,//开启自动释放模式和EF原理一样我就不多解释了
+                });
+                //调式代码 用来打印SQL 
+                db.Aop.OnLogExecuting = (sql, pars) =>
+                {
+                    LogHelper.DbSqlLog(sql + "\r\n" + db.Utilities.SerializeObject(pars.ToDictionary(it => it.ParameterName, it => it.Value)));
+                };
+                return db;
+            }
+        }
         //public SimpleClient<Student> StudentDb { get { return new SimpleClient<Student>(Db); } }//用来处理Student表的常用操作
         //public SimpleClient<School> SchoolDb { get { return new SimpleClient<School>(Db); } }//用来处理School表的常用操作
-        public SimpleClient<T> CurrentDb { get { return new SimpleClient<T>(Db); } }//用来处理T表的常用操作
+        public SimpleClient<T> CurrentDb { get { return new SimpleClient<T>(DbInstance); } }//用来处理T表的常用操作
 
         #region 公用方法
         #region 新增
@@ -109,9 +115,9 @@ namespace WJ.Service
         /// <returns></returns>
         public virtual bool Update(T obj, bool isNullColumn = false)
         {
-            if(isNullColumn)
+            if (isNullColumn)
             {
-                return Db.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
+                return DbInstance.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
             }
             else
             {
@@ -164,9 +170,9 @@ namespace WJ.Service
         /// 根据条件获取列表
         /// </summary>
         /// <returns></returns>
-        public virtual List<T> GetList(Expression<Func<T, bool>> whereExpression)
+        public virtual List<T> GetList(Expression<Func<T, bool>> whereExpression, PageModel page = null)
         {
-            return CurrentDb.GetList(whereExpression);
+            return CurrentDb.GetPageList(whereExpression, page);
         }
 
         /// <summary>
@@ -176,7 +182,7 @@ namespace WJ.Service
         /// <returns></returns>
         public bool IsExits(Expression<Func<T, bool>> whereExpression)
         {
-            using (SqlSugarClient db = DbHelper.GetInstance())
+            using (SqlSugarClient db = DbInstance)
             {
                 return db.Queryable<T>().Any(whereExpression);
             }

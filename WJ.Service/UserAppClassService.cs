@@ -40,15 +40,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     return db.Queryable<WJ_V_UserAppClass>().Where(p => p.UserId == userId).ToList();
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }

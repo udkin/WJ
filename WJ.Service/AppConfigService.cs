@@ -40,14 +40,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     return db.Queryable<WJ_V_AppConfig>().Where(p => p.AppConfig_Cycle > 0).ToList();
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return null;
             }
@@ -63,14 +63,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     return db.Queryable<WJ_V_AppConfig>().Where(p => p.AppId == appId && p.AppConfigId == appConfigId).First();
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 return null;
             }

@@ -34,15 +34,14 @@ namespace WJ.Service
             string value = string.Empty;
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     value = db.Queryable<WJ_T_SystemMap>().Where(p => p.SystemMap_Type == mapType && p.SystemMap_State == 1).Select(f => f.SystemMap_Value).First().ToString();
                 }
             }
             catch (Exception ex)
             {
-                Common.LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                Common.LogHelper.DbServiceLog(ex.Message);
             }
             return value;
         }

@@ -81,7 +81,7 @@ namespace WJ.Entity
         public int TitleId { get; set; }
 
         /// <summary>
-        /// Desc:用户类型，1：管理员，2：操作员
+        /// Desc:用户类型，1：管理员，2：主屏操作员，3：子屏操作员
         /// Default:2
         /// Nullable:False
         /// </summary>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,8 +23,8 @@ namespace WJ.API.Controllers
         /// 登录系统应用
         /// </summary>
         /// <returns></returns>
-        [AcceptVerbs("GET", "POST")]
-        public HttpResponseMessage PlatformLogin()
+        [HttpGet, HttpPost]
+        public HttpResponseMessage PlatformLogin(JObject data)
         {
             int appId = 1;
             var appInfo = new DbContext<WJ_V_UserApp>().GetSingle(p => p.UserId == UserInfo.Id && p.AppId == Convert.ToInt32(appId));

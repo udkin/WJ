@@ -27,7 +27,5 @@ namespace WJ.Service
             }
         }
         #endregion
-
-
     }
 }

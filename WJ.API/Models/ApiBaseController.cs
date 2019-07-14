@@ -17,19 +17,14 @@ namespace WJ.API.Models
     public class ApiBaseController : ApiController
     {
         #region 属性
-        private WJ_T_User _userInfo= null;
         /// <summary>
-        /// 
+        /// 用户信息
         /// </summary>
         public WJ_T_User UserInfo
         {
             get
             {
-                if (_userInfo == null)
-                    lock ("GetUser")
-                        if (_userInfo == null)
-                            _userInfo = ControllerContext.RouteData.Values["UserInfo"] as WJ_T_User;
-                return _userInfo;
+                return ControllerContext.RouteData.Values["UserInfo"] as WJ_T_User;
             }
         }
         #endregion
@@ -67,7 +62,12 @@ namespace WJ.API.Models
 
         public ResultModel GetResultInstance(string msg = "")
         {
-            return new ResultModel { Success = 0, Code = 0, ErrorMsg = msg };
+            return new ResultModel { Success = 0, Code = 1, ErrorMsg = msg };
+        }
+
+        public SearchResultModel GetSearchResultInstance(string msg = "")
+        {
+            return new SearchResultModel { Success = 0, Code = 1,Total = 0, ErrorMsg = msg };
         }
 
 
@@ -79,10 +79,15 @@ namespace WJ.API.Models
             resultObj.ResultData = resultData;
         }
 
+        public void SetSuccessAdminResult(SearchResultModel resultObj, int total, dynamic resultData = null)
+        {
+            SetSuccessResult(resultObj, resultData);
+            resultObj.Total = total;
+        }
+
         public void SetFailResult(ResultModel resultObj, string errorMsg = "")
         {
             resultObj.Success = 0;
-            resultObj.Code = 1;
             resultObj.ErrorMsg = errorMsg;
         }
     }

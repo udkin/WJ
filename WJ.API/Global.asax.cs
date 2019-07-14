@@ -14,7 +14,7 @@ namespace WJ.API
         protected void Application_Start()
         {
             // 获取网站配置信息到缓存中
-            ConfigHelper.Instance.FillWebSiteConfig();
+            ConfigHelper.FillWebSiteConfig();
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
             // 使api返回为json 

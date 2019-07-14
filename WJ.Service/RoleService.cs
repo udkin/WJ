@@ -37,15 +37,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     return db.Queryable<WJ_T_Role>().Where(p => p.Role_State == 1).OrderBy(p => p.Role_Sort).Select(f => new { f.Id, f.Role_Name }).ToList();
                 }
             }
             catch (Exception ex)
             {
-                Common.LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                Common.LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }

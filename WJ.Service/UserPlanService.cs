@@ -36,7 +36,7 @@ namespace WJ.Service
         /// <returns></returns>
         public bool AddUserPlan(int userId, dynamic jsonObj)
         {
-            using (SqlSugarClient db = DbHelper.GetInstance())
+            using (var db = DbInstance)
             {
                 try
                 {
@@ -86,13 +86,11 @@ namespace WJ.Service
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    LogHelper.ErrorLog(ex.Message);
+                    LogHelper.DbServiceLog(ex.Message);
                     db.RollbackTran();
                     return false;
                 }
             }
-
         }
         #endregion
 
@@ -105,7 +103,7 @@ namespace WJ.Service
         /// <returns></returns>
         public bool UpdateUserPlan(int userId, dynamic jsonObj)
         {
-            using (SqlSugarClient db = DbHelper.GetInstance())
+            using (var db = DbInstance)
             {
                 try
                 {
@@ -158,8 +156,7 @@ namespace WJ.Service
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    LogHelper.ErrorLog(ex.Message);
+                    LogHelper.DbServiceLog(ex.Message);
                     db.RollbackTran();
                     return false;
                 }
@@ -174,7 +171,7 @@ namespace WJ.Service
         /// <returns></returns>
         public bool UpdateUserPlanActivate(int userId, int userPandId)
         {
-            using (SqlSugarClient db = DbHelper.GetInstance())
+            using (var db = DbInstance)
             {
                 try
                 {
@@ -186,8 +183,7 @@ namespace WJ.Service
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    LogHelper.ErrorLog(ex.Message);
+                    LogHelper.DbServiceLog(ex.Message);
                     db.RollbackTran();
                     return false;
                 }
@@ -204,7 +200,7 @@ namespace WJ.Service
         /// <returns></returns>
         public bool DeleteUserPlan(int userId, dynamic jsonObj)
         {
-            using (SqlSugarClient db = DbHelper.GetInstance())
+            using (var db = DbInstance)
             {
                 try
                 {
@@ -225,8 +221,7 @@ namespace WJ.Service
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
-                    LogHelper.ErrorLog(ex.Message);
+                    LogHelper.DbServiceLog(ex.Message);
                     db.RollbackTran();
                     return false;
                 }
@@ -245,15 +240,14 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                using (SqlSugarClient db = DbInstance)
                 {
                     return db.Queryable<WJ_T_UserPlan>().Where(p => p.UserId == userId).ToList();
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }

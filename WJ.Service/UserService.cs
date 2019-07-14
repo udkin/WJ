@@ -1,4 +1,5 @@
-﻿using SqlSugar;
+﻿using Newtonsoft.Json.Linq;
+using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,19 +42,15 @@ namespace WJ.Service
             int userId = -1;
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
+                var user = DbInstance.Queryable<WJ_T_User>().Where(p => p.User_LoginName == loginName && p.User_State == 1).First();
+                if (user != null && user.User_Password == password)
                 {
-                    var user = db.Queryable<WJ_T_User>().Where(p => p.User_LoginName == loginName && p.User_State == 1).First();
-                    if (user != null && user.User_Password == password)
-                    {
-                        return user.Id;
-                    }
+                    return user.Id;
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
             }
             return userId;
         }
@@ -67,15 +64,11 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Updateable<WJ_T_User>(p=> new WJ_T_User() { User_Token = "" }).Where(p => p.User_Token == token ).ExecuteCommand() > 0;
-                }
+                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_Token = "" }).Where(p => p.User_Token == token).ExecuteCommand() > 0;
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
             }
             return false;
         }
@@ -91,15 +84,11 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Queryable<WJ_T_User>().Where(p => p.User_Token == token).First();
-                }
+                return DbInstance.Queryable<WJ_T_User>().Where(p => p.User_Token == token).First();
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }
@@ -115,39 +104,116 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Updateable<WJ_T_User>().SetColumns(p => new WJ_T_User() { User_Token = token }).Where(p => p.Id == userId).ExecuteCommand() > 0;
-                }
+                return DbInstance.Updateable<WJ_T_User>().SetColumns(p => new WJ_T_User() { User_Token = token }).Where(p => p.Id == userId).ExecuteCommand() > 0;
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return false;
             }
         }
         #endregion
 
+        #region 管理员
         #region 获取后台管理员列表信息
         /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>
-        public List<WJ_V_User> GetManagerList(int pageIndex = 1, int pageSize = 20)
+        public List<WJ_V_User> GetManagerList(JObject data, ref int totalCount)
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Queryable<WJ_V_User>().Where(p => p.User_Type == 1 && p.User_State == 1).ToList();
-                }
+                int pageIndex = data["page"].ToObject<int>();
+                int pageSize = data["limit"].ToObject<int>();
+                string userName = data["username"].ToString().Trim();
+                string telphone = data["telphone"].ToString().Trim();
+                int roleId = data["role"].ToObject<int>();
+                //PageModel page = new PageModel();
+                //page.PageIndex = pageIndex;
+                //page.PageSize = limit;
+                //managerList = new DbContext<WJ_V_User>().GetList(p => p.User_Name.Contains(""), page);
+
+                //拼接拉姆达
+                //var exp = Expressionable.Create<WJ_V_User>()
+                //  .OrIF(1 == 1, it => it.Id == 11)
+                //  .And(it => it.Id == 1)
+                //  .AndIF(2 == 2, it => it.Id == 1)
+                //  .Or(it => it.User_Name == "a1").ToExpression();//拼接表达式
+                //var list = DbInstance.Queryable<WJ_V_User>().Where(exp).ToList();
+
+                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type == 1 && p.User_State == 1)
+                    .WhereIF(!string.IsNullOrWhiteSpace(userName), p => p.User_Name.Contains(userName))
+                    .WhereIF(!string.IsNullOrWhiteSpace(telphone), p => p.User_Name.Contains(telphone))
+                    .WhereIF(roleId > 0, p => p.RoleId == data["role"].ToObject<int>())
+                    .ToPageList(pageIndex, pageSize, ref totalCount);
+
+                return queryable;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.ErrorLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
+            }
+        }
+        #endregion 
+
+        public bool AddManager(JObject data, ref string errorMsg)
+        {
+            using (SqlSugar.SqlSugarClient db = DbHelper.GetInstance())
+            {
+                try
+                {
+                    if (UserService.Instance.IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_State == 1))
+                    {
+                        errorMsg = "存在相同登录用户名";
+                    }
+                    else
+                    {
+                        WJ_T_User user = new WJ_T_User();
+                        user.User_LoginName = data["loginname"].ToString();
+                        user.User_Password = data["password"].ToString();
+                        user.DeptId = data["dept"].ToObject<int>();
+                        user.TitleId = data["title"].ToObject<int>();
+                        user.User_Name = data["username"].ToString();
+                        user.User_Head = "";
+                        user.User_Sex = data["sex"].ToObject<int>();
+                        user.User_Phone = data["telphone"].ToString();
+                        user.User_Type = 1;
+                        user.User_CreateTime = DateTime.Now;
+                        user.User_State = 1;
+
+                        int roleId = data["role"].ToObject<int>();
+
+                        db.BeginTran();
+                        int userId = UserService.Instance.Add(user, db);
+
+                        if (userId > 0)
+                        {
+                            WJ_T_UserRole userRole = new WJ_T_UserRole();
+                            userRole.UserId = userId;
+                            userRole.RoleId = roleId;
+
+                            if (UserRoleService.Instance.Add(userRole, db) > 0)
+                            {
+                                db.CommitTran();
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            db.RollbackTran();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    db.RollbackTran();
+                    LogHelper.DbServiceLog(ex.Message);
+                    errorMsg = ex.Message;
+                }
+
+                return false;
             }
         }
         #endregion
@@ -161,15 +227,11 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Queryable<WJ_V_User>().Where(p => p.User_Type > 1 && p.User_State == 1).ToList();
-                }
+                return DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type > 1 && p.User_State == 1).ToList();
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }
@@ -186,15 +248,11 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbHelper.GetInstance())
-                {
-                    return db.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.Id == id).ExecuteCommand() > 0;
-                }
+                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.Id == id).ExecuteCommand() > 0;
             }
             catch (Exception ex)
             {
-                LogHelper.ErrorLog(ex.Message);
-                Console.WriteLine(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return false;
             }
         }
