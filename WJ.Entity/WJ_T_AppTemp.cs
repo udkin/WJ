@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using SqlSugar;
 
 namespace WJ.Entity
 {
     ///<summary>
-    ///操作员所属应用
+    ///系统应用临时信息
     ///</summary>
-    public partial class WJ_V_UserApp
+    [SugarTable("WJ_T_AppTemp")]
+    public partial class WJ_T_AppTemp
     {
-        public WJ_V_UserApp()
+        public WJ_T_AppTemp()
         {
         }
 
@@ -18,167 +20,133 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public int UserId { get; set; }
+        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
+        public int Id { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:应用分类ID
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public string User_Name { get; set; }
+        public int AppClassId { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:应用ID
         /// Default:
         /// Nullable:True
         /// </summary>           
-        public int? AppClassId { get; set; }
+        public int? AppId { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public string AppClass_Name { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public int AppId { get; set; }
-
-        /// <summary>
-        /// Desc:
+        /// Desc:应用名称
         /// Default:
         /// Nullable:False
         /// </summary>           
         public string App_Name { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:应用图标
         /// Default:
-        /// Nullable:True
+        /// Nullable:False
         /// </summary>           
         public string App_Icon { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
+        /// Desc:应用类型，0：系统应用，1：定制应用
+        /// Default:0
         /// Nullable:False
         /// </summary>           
         public int App_Type { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public string App_TypeName { get; set; }
-
-        /// <summary>
-        /// Desc:
+        /// Desc:应用标识，供前端使用
         /// Default:
         /// Nullable:True
         /// </summary>           
         public int? App_Flag { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public string App_FlagName { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>           
-        public string LoginName { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>           
-        public string Password { get; set; }
-
-        /// <summary>
-        /// Desc:
+        /// Desc:应用登录URL
         /// Default:
         /// Nullable:True
         /// </summary>           
         public string App_LoginUrl { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:应用首页
         /// Default:
         /// Nullable:True
         /// </summary>           
         public string App_HomeUrl { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
+        /// Desc:登录请求方法
+        /// Default:Get
         /// Nullable:True
         /// </summary>           
         public string App_Method { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:请求参数
         /// Default:
         /// Nullable:True
         /// </summary>           
         public string App_Paramater { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:提交HTML表单
         /// Default:
         /// Nullable:True
         /// </summary>           
         public string App_Form { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:登录用户名
         /// Default:
         /// Nullable:True
         /// </summary>           
         public string App_LoginName { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:登录密码
         /// Default:
         /// Nullable:True
         /// </summary>           
         public string App_Password { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
+        /// Desc:浏览器类型，1：IE，2：Chrome
+        /// Default:1
         /// Nullable:True
         /// </summary>           
         public int? App_BrowserType { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:排序号
         /// Default:
-        /// Nullable:True
+        /// Nullable:False
         /// </summary>           
-        public string App_BrowserTypeName { get; set; }
+        public int App_Sort { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:创建者ID
         /// Default:
         /// Nullable:False
         /// </summary>           
         public int App_Creator { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
+        /// Desc:创建时间
+        /// Default:DateTime.Now
         /// Nullable:False
         /// </summary>           
         public DateTime App_CreateTime { get; set; }
+
+        /// <summary>
+        /// Desc:审批状态，0：未审批，1：审批
+        /// Default:0
+        /// Nullable:False
+        /// </summary>           
+        public int App_Approve { get; set; }
     }
 }

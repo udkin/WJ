@@ -90,7 +90,10 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SqlSugar, Version=5.0.0.8, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="SqlSugar, Version=5.0.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\sqlSugar.5.0.0.9\lib\SqlSugar.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -141,10 +144,12 @@
       <DependentUpon>AppLoginHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\AppClassController.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\DataServiceController.cs" />
     <Compile Include="Controllers\DeptController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
+    <Compile Include="Controllers\SystemMapController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TitleController.cs" />
     <Compile Include="Controllers\UserAppController.cs" />

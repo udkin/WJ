@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using SqlSugar;
 using System;
 using System.Collections.Generic;
 using System.Web;
@@ -101,6 +100,7 @@ namespace WJ.API.Controllers
         }
         #endregion
 
+        #region 菜单
         #region 获取用户权限菜单
         /// <summary>
         /// 获取用户权限菜单
@@ -132,6 +132,7 @@ namespace WJ.API.Controllers
 
             return Json<dynamic>(resultObj);
         }
+        #endregion 
         #endregion
 
         #region 获取当前用户信息
@@ -149,8 +150,7 @@ namespace WJ.API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
+                LogHelper.ControllerErrorLog(ex.Message);
                 resultObj.ErrorMsg = ex.Message;
             }
 
@@ -168,6 +168,7 @@ namespace WJ.API.Controllers
         public IHttpActionResult GetManagerList(JObject request)
         {
             var resultObj = GetSearchResultInstance();
+
             try
             {
                 int total = 0;
@@ -176,8 +177,7 @@ namespace WJ.API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
+                LogHelper.ControllerErrorLog(ex.Message);
                 SetFailResult(resultObj, ex.Message);
             }
 
@@ -194,16 +194,24 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult AddManager(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("添加用户信息失败");
+            ResultModel resultObj = GetResultInstance("添加管理员信息失败");
 
-            string errorMsg = string.Empty;
-            if(UserService.Instance.AddManager(data,ref errorMsg))
+            try
             {
-                SetSuccessResult(resultObj);
+                string errorMsg = string.Empty;
+                if (UserService.Instance.AddManager(data, ref errorMsg))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj, errorMsg);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                SetFailResult(resultObj, errorMsg);
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
             }
 
             return Json<dynamic>(resultObj);
@@ -214,57 +222,29 @@ namespace WJ.API.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult UpdateManager(JObject request)
+        public IHttpActionResult UpdateManager(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("更新用户信息失败");
+            ResultModel resultObj = GetResultInstance("更新管理员信息失败");
 
-            using (SqlSugar.SqlSugarClient db = DbHelper.GetInstance())
+            try
             {
-                try
+                string errorMsg = string.Empty;
+                if (UserService.Instance.UpdateManager(data, ref errorMsg))
                 {
-                    WJ_T_User user = UserService.Instance.GetSingle(p => p.User_LoginName == request["loginname"].ToString().Trim());
-                    user.User_Password = request["password"].ToString();
-                    user.DeptId = request["dept"].ToObject<int>();
-                    user.TitleId = request["title"].ToObject<int>();
-                    user.User_Name = request["username"].ToString();
-                    user.User_Head = "";
-                    user.User_Sex = request["sex"].ToObject<int>();
-                    user.User_Phone = request["telphone"].ToString();
-
-                    int roleId = request["role"].ToObject<int>();
-
-                    db.BeginTran();
-                    bool flag = UserService.Instance.Update(user, db);
-
-                    if (flag)
-                    {
-                        WJ_T_UserRole userRole = UserRoleService.Instance.GetSingle(p => p.UserId == user.Id);
-                        userRole.RoleId = roleId;
-
-                        if (UserRoleService.Instance.Update(userRole, db))
-                        {
-                            db.CommitTran();
-                            SetSuccessResult(resultObj);
-                        }
-                        else
-                        {
-                            db.RollbackTran();
-                        }
-                    }
-                    else
-                    {
-                        db.RollbackTran();
-                    }
+                    SetSuccessResult(resultObj);
                 }
-                catch (Exception ex)
+                else
                 {
-                    db.RollbackTran();
-                    LogHelper.ControllerErrorLog(ex.Message);
-                    SetFailResult(resultObj, ex.Message);
+                    SetFailResult(resultObj, errorMsg);
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
             }
 
             return Json<dynamic>(resultObj);
@@ -280,11 +260,12 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult DeleteManager(JObject request)
         {
-            ResultModel resultObj = GetResultInstance("更新用户信息失败");
+            ResultModel resultObj = GetResultInstance("删除管理员信息失败");
+
             try
             {
-                int userId = request["UserId"].ToObject<int>();
-                if (UserService.Instance.DeleteUser(userId))
+                int userId = request["Id"].ToObject<int>();
+                if (UserService.Instance.DeleteManager(userId))
                 {
                     SetSuccessResult(resultObj);
                 }
@@ -307,14 +288,14 @@ namespace WJ.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult GetUserList()
+        public IHttpActionResult GetUserList(JObject data)
         {
-            ResultModel resultObj = GetResultInstance();
+            SearchResultModel resultObj = GetSearchResultInstance();
             try
             {
-                var menuList = UserService.Instance.GetUserList();
-                //result = new { code = 0, success = 0, data = menuList };
-                SetSuccessResult(resultObj, menuList);
+                int total = 0;
+                var resultData = UserService.Instance.GetUserList(data, ref total);
+                SetSuccessAdminResult(resultObj, total, resultData);
             }
             catch (Exception ex)
             {
@@ -333,74 +314,96 @@ namespace WJ.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult AddOPUser(JObject request)
+        public IHttpActionResult AddUser(JObject data)
         {
             ResultModel resultObj = GetResultInstance("添加用户信息失败");
-            using (SqlSugar.SqlSugarClient db = DbHelper.GetInstance())
+
+            try
             {
-                try
+                string errorMsg = string.Empty;
+                if (UserService.Instance.AddUser(data, ref errorMsg))
                 {
-                    if (UserService.Instance.IsExits(p => p.User_LoginName == request["loginname"].ToString().Trim() && p.User_State == 1))
-                    {
-                        SetFailResult(resultObj, "存在相同登录用户名");
-                    }
-                    else
-                    {
-                        WJ_T_User user = new WJ_T_User();
-                        user.User_LoginName = request["loginname"].ToString();
-                        user.User_Password = request["password"].ToString();
-                        user.DeptId = request["dept"].ToObject<int>();
-                        user.TitleId = request["title"].ToObject<int>();
-                        user.User_Name = request["username"].ToString();
-                        user.User_Head = "";
-                        user.User_Sex = request["sex"].ToObject<int>();
-                        user.User_Phone = request["telphone"].ToString();
-                        user.User_Type = request["usertype"].ToObject<int>();
-                        user.User_CreateTime = DateTime.Now;
-                        user.User_State = 1;
-
-                        string appIds = request["app"].ToString();
-
-                        db.BeginTran();
-                        int userId = UserService.Instance.Add(user, db);
-
-                        if (userId > 0)
-                        {
-                            //WJ_T_UserApp userApp = new WJ_T_UserApp();
-                            //userApp.UserId = userId;
-                            //userApp.AppId = appIds;
-
-                            //if (UserRoleService.Instance.Add(userApp, db) > 0)
-                            //{
-                            //    db.CommitTran();
-                            //    SetSuccessResult(resultObj);
-                            //}
-                        }
-                        else
-                        {
-                            db.RollbackTran();
-                        }
-                    }
+                    SetSuccessResult(resultObj);
                 }
-                catch (Exception ex)
+                else
                 {
-                    db.RollbackTran();
-                    LogHelper.ControllerErrorLog(ex.Message);
-                    SetFailResult(resultObj, ex.Message);
+                    SetFailResult(resultObj, errorMsg);
                 }
             }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
             return Json<dynamic>(resultObj);
         }
         #endregion
 
         #region 删除操作用户
+        /// <summary>
+        /// 删除操作用户
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult DeleteUser(JObject data)
+        {
+            ResultModel resultObj = GetResultInstance("删除用户信息失败");
 
+            try
+            {
+                int userId = data["Id"].ToObject<int>();
+                string errorMsg = string.Empty;
+                if (UserService.Instance.DeleteUser(userId, ref errorMsg))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj, errorMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
         #endregion
 
         #region 修改操作用户
-        public bool UpdateUser()
+        /// <summary>
+        /// 修改操作用户
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult UpdateUser(JObject data)
         {
-            return true;
+            ResultModel resultObj = GetResultInstance("更新用户信息失败");
+
+            try
+            {
+                string errorMsg = string.Empty;
+                if (UserService.Instance.UpdateUser(data, ref errorMsg))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj, errorMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
         }
         #endregion
         #endregion

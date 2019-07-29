@@ -13,9 +13,8 @@ namespace WJ.Entity
     {
         public WJ_T_Dept()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -30,13 +29,6 @@ namespace WJ.Entity
         /// Nullable:False
         /// </summary>
         public string Dept_Name { get; set; }
-
-        /// <summary>
-        /// Desc:部门全称
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        public string Dept_FullName { get; set; }
 
         /// <summary>
         /// Desc:部门图标

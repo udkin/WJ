@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,39 +13,96 @@ using WJ.Service;
 namespace WJ.API.Controllers
 {
     [ApiAuthorize]
-    public class UserAppController : ApiController
+    public class UserAppController : ApiBaseController
     {
-        #region 获取用户系统应用列表
+        #region 获取用户APP列表
         /// <summary>
         /// 获取用户系统应用列表
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        public IHttpActionResult GetUserAppList()
+        [HttpGet, HttpPost]
+        public IHttpActionResult GetUserAppList(JObject data)
         {
-            HttpResponseMessage redirectResponse = new HttpResponseMessage(HttpStatusCode.Moved);
-            dynamic result = null;
+            SearchResultModel resultObj = GetSearchResultInstance();
             try
             {
-                AuthInfo authInfo = this.RequestContext.RouteData.Values["access_token"] as AuthInfo;
+                int total = 0;
+                var resultData = UserAppService.Instance.GetList(data, ref total);
+                SetSuccessAdminResult(resultObj, total, resultData);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
 
-                if (authInfo == null || DateTime.Now >= authInfo.TokenTimeLimit)
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 设置用户APP信息
+        /// <summary>
+        /// 配置用户APP
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult SetUserApp(JObject data)
+        {
+            ResultModel resultObj = GetResultInstance("设置用户APP信息失败");
+
+            try
+            {
+                string errorMsg = string.Empty;
+                if (UserAppService.Instance.SetUserApp(data, ref errorMsg))
                 {
-                    result = new { code = 0, success = 0, data = "获取失败" };
+                    SetSuccessResult(resultObj);
                 }
                 else
                 {
-                    dynamic userAppList = UserAppService.Instance.GetUserAppDynamic(authInfo.UserId);
-                    result = new { code = 0, success = 0, data = userAppList };
+                    SetFailResult(resultObj, errorMsg);
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
             }
 
-            return Json<dynamic>(result);
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 修改用户APP信息
+        /// <summary>
+        /// 修改用户APP信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult UpdateUserApp(JObject data)
+        {
+            ResultModel resultObj = GetResultInstance("更新用户APP信息失败");
+
+            try
+            {
+                string errorMsg = string.Empty;
+                if (UserAppService.Instance.Update(data, ref errorMsg))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj, errorMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
         }
         #endregion
     }

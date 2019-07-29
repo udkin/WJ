@@ -142,17 +142,17 @@ namespace WJ.API.Controllers
 
                 foreach (var item in appList)
                 {
-                    if (!appDict.ContainsKey(item.AppClassId))
+                    if (!appDict.ContainsKey(item.AppClassId.Value))
                     {
-                        appDict.Add(item.AppClassId, new List<dynamic>());
+                        appDict.Add(item.AppClassId.Value, new List<dynamic>());
                     }
 
-                    appDict[item.AppClassId].Add(new
+                    appDict[item.AppClassId.Value].Add(new
                     {
                         AppId = item.AppId,
                         App_Name = item.App_Name,
-                        App_Image = item.App_Image,
-                        App_BrowserType = item.AppConfig_BrowserType,
+                        App_Image = item.App_Icon,
+                        App_BrowserType = item.App_BrowserType,
                         App_Type = item.App_Type,
                         App_Flag = item.App_Flag
                     });

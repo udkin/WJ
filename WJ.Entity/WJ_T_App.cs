@@ -36,18 +36,95 @@ namespace WJ.Entity
         public string App_Name { get; set; }
 
         /// <summary>
-        /// Desc:应用部门
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public string App_DeptName { get; set; }
-
-        /// <summary>
         /// Desc:应用图标
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string App_Image { get; set; }
+        public string App_Icon { get; set; }
+
+        /// <summary>
+        /// Desc:应用类型，0：系统应用，1：定制应用
+        /// Default:0
+        /// Nullable:False
+        /// </summary>
+        public int App_Type { get; set; }
+
+        /// <summary>
+        /// Desc:应用标识，供前端使用
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public int? App_Flag { get; set; }
+
+        /// <summary>
+        /// Desc:应用登录URL
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_LoginUrl { get; set; }
+
+        /// <summary>
+        /// Desc:应用首页
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_HomeUrl { get; set; }
+
+        /// <summary>
+        /// Desc:登录请求方法
+        /// Default:Get
+        /// Nullable:True
+        /// </summary>
+        public string App_Method { get; set; }
+
+        /// <summary>
+        /// Desc:请求参数
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_Paramater { get; set; }
+
+        /// <summary>
+        /// Desc:提交HTML表单
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_Form { get; set; }
+
+        /// <summary>
+        /// Desc:登录用户名
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_LoginName { get; set; }
+
+        /// <summary>
+        /// Desc:登录密码
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_Password { get; set; }
+
+        /// <summary>
+        /// Desc:浏览器类型，1：IE，2：Chrome
+        /// Default:1
+        /// Nullable:True
+        /// </summary>
+        public int? App_BrowserType { get; set; }
+
+        /// <summary>
+        /// Desc:排序号
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public int App_Sort { get; set; }
+
+        /// <summary>
+        /// Desc:创建者ID
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public int App_Creator { get; set; }
 
         /// <summary>
         /// Desc:创建时间
@@ -55,13 +132,6 @@ namespace WJ.Entity
         /// Nullable:False
         /// </summary>
         public DateTime App_CreateTime { get; set; }
-
-        /// <summary>
-        /// Desc:操作者ID
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public int App_OperatorId { get; set; }
 
         /// <summary>
         /// Desc:应用状态，-1：废弃，1：正常

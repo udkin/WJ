@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
@@ -126,9 +127,9 @@ namespace WJ.Service
             {
                 int pageIndex = data["page"].ToObject<int>();
                 int pageSize = data["limit"].ToObject<int>();
-                string userName = data["username"].ToString().Trim();
-                string telphone = data["telphone"].ToString().Trim();
-                int roleId = data["role"].ToObject<int>();
+                string userName = (data["username"] == null ? "" : data["username"].ToString().Trim());
+                string telphone = (data["telphone"] == null ? "" : data["telphone"].ToString().Trim());
+                int roleId = (data["role"] == null ? 0 : data["role"].ToObject<int>());
                 //PageModel page = new PageModel();
                 //page.PageIndex = pageIndex;
                 //page.PageSize = limit;
@@ -142,7 +143,7 @@ namespace WJ.Service
                 //  .Or(it => it.User_Name == "a1").ToExpression();//拼接表达式
                 //var list = DbInstance.Queryable<WJ_V_User>().Where(exp).ToList();
 
-                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type == 1 && p.User_State == 1)
+                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.Id == 1 || p.User_Type == 1 && p.User_State == 1)
                     .WhereIF(!string.IsNullOrWhiteSpace(userName), p => p.User_Name.Contains(userName))
                     .WhereIF(!string.IsNullOrWhiteSpace(telphone), p => p.User_Name.Contains(telphone))
                     .WhereIF(roleId > 0, p => p.RoleId == data["role"].ToObject<int>())
@@ -156,15 +157,22 @@ namespace WJ.Service
                 return null;
             }
         }
-        #endregion 
+        #endregion
 
+        #region 增加管理员信息
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data">提交的表单数据</param>
+        /// <param name="errorMsg">错误信息</param>
+        /// <returns></returns>
         public bool AddManager(JObject data, ref string errorMsg)
         {
-            using (SqlSugar.SqlSugarClient db = DbHelper.GetInstance())
+            using (SqlSugar.SqlSugarClient db = DbInstance)
             {
                 try
                 {
-                    if (UserService.Instance.IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_State == 1))
+                    if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 1 && p.User_State == 1))
                     {
                         errorMsg = "存在相同登录用户名";
                     }
@@ -186,7 +194,7 @@ namespace WJ.Service
                         int roleId = data["role"].ToObject<int>();
 
                         db.BeginTran();
-                        int userId = UserService.Instance.Add(user, db);
+                        int userId = Add(user, db);
 
                         if (userId > 0)
                         {
@@ -218,16 +226,115 @@ namespace WJ.Service
         }
         #endregion
 
-        #region 获取前台操作员列表信息
+        #region 更新管理员信息
+        /// <summary>
+        /// 更新管理员信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public bool UpdateManager(JObject data, ref string errorMsg)
+        {
+            using (SqlSugar.SqlSugarClient db = DbInstance)
+            {
+                try
+                {
+                    int id = data["Id"].ToObject<int>();
+                    if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 1 && p.User_State == 1))
+                    {
+                        errorMsg = "存在相同登录用户名";
+                    }
+                    else
+                    {
+                        WJ_T_User user = GetSingle(p => p.Id == id);
+                        user.User_LoginName = data["loginname"].ToString();
+                        user.User_Password = data["password"].ToString();
+                        user.DeptId = data["dept"].ToObject<int>();
+                        user.TitleId = data["title"].ToObject<int>();
+                        user.User_Name = data["username"].ToString();
+                        user.User_Head = "";
+                        user.User_Sex = data["sex"].ToObject<int>();
+                        user.User_Phone = data["telphone"].ToString();
+
+                        db.BeginTran();
+                        bool flag = Update(user, db);
+
+                        if (flag)
+                        {
+                            int roleId = data["role"].ToObject<int>();
+                            WJ_T_UserRole userRole = UserRoleService.Instance.GetSingle(p => p.UserId == user.Id);
+                            userRole.RoleId = roleId;
+
+                            if (UserRoleService.Instance.Update(userRole, db))
+                            {
+                                db.CommitTran();
+                                return true;
+                            }
+                            else
+                            {
+                                db.RollbackTran();
+                            }
+                        }
+                        else
+                        {
+                            db.RollbackTran();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    db.RollbackTran();
+                    LogHelper.ControllerErrorLog(ex.Message);
+                }
+                return false;
+            }
+        }
+        #endregion
+
+        #region 删除管理员信息
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="db"></param>
+        /// <returns></returns>
+        public bool DeleteManager(int id)
+        {
+            try
+            {
+                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.User_Type == 1 && p.Id == id).ExecuteCommand() > 0;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                return false;
+            }
+        }
+        #endregion
+        #endregion
+
+        #region 操作用户
+        #region 获取操作员列表信息
         /// <summary>
         /// 获取前台操作员列表信息
         /// </summary>
         /// <returns></returns>
-        public List<WJ_V_User> GetUserList()
+        public List<WJ_V_User> GetUserList(JObject data, ref int totalCount)
         {
             try
             {
-                return DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type > 1 && p.User_State == 1).ToList();
+                int pageIndex = data["page"].ToObject<int>();
+                int pageSize = data["limit"].ToObject<int>();
+                string name = (data["User_Name"] == null ? "" : data["User_Name"].ToString().Trim());
+
+                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type > 1 && p.User_State == 1)
+                    .WhereIF(!string.IsNullOrWhiteSpace(name), p => p.User_Name.Contains(name))
+                    .OrderBy(p => p.User_Type)
+                    .OrderBy(p => p.User_CreateTime)
+                    .ToPageList(pageIndex, pageSize, ref totalCount);
+
+                return queryable;
+
+                //return DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type > 1 && p.User_State == 1).ToList();
             }
             catch (Exception ex)
             {
@@ -237,25 +344,109 @@ namespace WJ.Service
         }
         #endregion
 
-        #region 删除用户信息
+        #region 增加操作用户信息
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data">提交的表单数据</param>
+        /// <param name="errorMsg">错误信息</param>
+        /// <returns></returns>
+        public bool AddUser(JObject data, ref string errorMsg)
+        {
+            try
+            {
+                if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 3 && p.User_State == 1))
+                {
+                    errorMsg = "存在相同登录用户名";
+                }
+                else
+                {
+                    WJ_T_User user = new WJ_T_User();
+                    user.User_LoginName = data["loginname"].ToString();
+                    user.User_Password = data["password"].ToString();
+                    user.DeptId = data["dept"].ToObject<int>();
+                    user.TitleId = data["title"].ToObject<int>();
+                    user.User_Name = data["username"].ToString();
+                    user.User_Head = "";
+                    user.User_Sex = data["sex"].ToObject<int>();
+                    user.User_Phone = data["telphone"].ToString();
+                    user.User_Type = 3;
+                    user.User_CreateTime = DateTime.Now;
+                    user.User_State = 1;
+
+                    return Add(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                errorMsg = ex.Message;
+            }
+
+            return false;
+        }
+        #endregion
+
+        #region 更新操作用户信息
+        /// <summary>
+        /// 更新操作用户信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public bool UpdateUser(JObject data, ref string errorMsg)
+        {
+            try
+            {
+                int id = data["Id"].ToObject<int>();
+                if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 3 && p.User_State == 1))
+                {
+                    errorMsg = "存在相同登录用户名";
+                }
+                else
+                {
+                    WJ_T_User user = GetSingle(p => p.Id == id);
+                    user.User_LoginName = data["loginname"].ToString();
+                    user.User_Password = data["password"].ToString();
+                    user.DeptId = data["dept"].ToObject<int>();
+                    user.TitleId = data["title"].ToObject<int>();
+                    user.User_Name = data["username"].ToString();
+                    user.User_Head = "";
+                    user.User_Sex = data["sex"].ToObject<int>();
+                    user.User_Phone = data["telphone"].ToString();
+
+                    return Update(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMsg = ex.Message;
+                LogHelper.ControllerErrorLog(ex.Message);
+            }
+            return false;
+        }
+        #endregion
+
+        #region 删除操作用户信息
         /// <summary>
         /// 
         /// </summary>
         /// <param name="id"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public bool DeleteUser(int id)
+        public bool DeleteUser(int id, ref string errorMsg)
         {
             try
             {
-                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.Id == id).ExecuteCommand() > 0;
+                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.User_Type == 3 && p.Id == id).ExecuteCommand() > 0;
             }
             catch (Exception ex)
             {
+                errorMsg = ex.Message;
                 LogHelper.DbServiceLog(ex.Message);
                 return false;
             }
         }
+        #endregion
         #endregion
     }
 }

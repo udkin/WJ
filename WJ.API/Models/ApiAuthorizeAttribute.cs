@@ -38,7 +38,7 @@ namespace WJ.API.Models
                     else
                     {
                         string controllerName = actionContext.ControllerContext.ControllerDescriptor.ControllerName.ToLower();
-                        if (MenuService.Instance.AuthorizeController(userInfo.Id, controllerName))
+                        if (("systemmap,userapp").Split(',').Contains(controllerName) || MenuService.Instance.AuthorizeController(userInfo.Id, controllerName))
                         {
                             actionContext.RequestContext.RouteData.Values.Add("UserInfo", userInfo);
                             base.IsAuthorized(actionContext);

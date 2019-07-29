@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SqlSugar, Version=5.0.0.8, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\sqlSugar.5.0.0.8\lib\SqlSugar.dll</HintPath>
+    <Reference Include="SqlSugar, Version=5.0.0.9, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\sqlSugar.5.0.0.9\lib\SqlSugar.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -52,10 +52,12 @@
     <Compile Include="WJ_T_App.cs" />
     <Compile Include="WJ_T_AppClass.cs" />
     <Compile Include="WJ_T_AppData.cs" />
+    <Compile Include="WJ_T_AppTemp.cs" />
     <Compile Include="WJ_T_Audit.cs" />
     <Compile Include="WJ_T_Dept.cs" />
     <Compile Include="WJ_T_Log.cs" />
     <Compile Include="WJ_T_Menu.cs" />
+    <Compile Include="WJ_V_Role.cs" />
     <Compile Include="WJ_T_Role.cs" />
     <Compile Include="WJ_T_RoleMenu.cs" />
     <Compile Include="WJ_T_SystemMap.cs" />
@@ -67,7 +69,9 @@
     <Compile Include="WJ_T_UserApp.cs" />
     <Compile Include="WJ_T_UserPlanApp.cs" />
     <Compile Include="WJ_T_UserRole.cs" />
+    <Compile Include="WJ_V_App.cs" />
     <Compile Include="WJ_V_AppConfig.cs" />
+    <Compile Include="WJ_V_RoleMenu.cs" />
     <Compile Include="WJ_V_User.cs" />
     <Compile Include="WJ_V_UserApp.cs" />
     <Compile Include="WJ_V_UserAppClass.cs" />

@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using SqlSugar;
 
 namespace WJ.Entity
 {
     ///<summary>
-    ///操作员所属应用
+    ///
     ///</summary>
-    public partial class WJ_V_UserApp
+    [SugarTable("WJ_V_App")]
+    public partial class WJ_V_App
     {
-        public WJ_V_UserApp()
+        public WJ_V_App()
         {
         }
 
@@ -18,21 +20,14 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public int UserId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>           
-        public string User_Name { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>           
-        public int? AppClassId { get; set; }
+        public int AppClassId { get; set; }
 
         /// <summary>
         /// Desc:
@@ -40,13 +35,6 @@ namespace WJ.Entity
         /// Nullable:False
         /// </summary>           
         public string AppClass_Name { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>           
-        public int AppId { get; set; }
 
         /// <summary>
         /// Desc:
@@ -89,20 +77,6 @@ namespace WJ.Entity
         /// Nullable:False
         /// </summary>           
         public string App_FlagName { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>           
-        public string LoginName { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>           
-        public string Password { get; set; }
 
         /// <summary>
         /// Desc:
@@ -163,9 +137,16 @@ namespace WJ.Entity
         /// <summary>
         /// Desc:
         /// Default:
-        /// Nullable:True
+        /// Nullable:False
         /// </summary>           
         public string App_BrowserTypeName { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public int App_Sort { get; set; }
 
         /// <summary>
         /// Desc:
@@ -180,5 +161,13 @@ namespace WJ.Entity
         /// Nullable:False
         /// </summary>           
         public DateTime App_CreateTime { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public int App_State { get; set; }
+
     }
 }

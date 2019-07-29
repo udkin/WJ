@@ -74,6 +74,13 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
+        public string Dept_Name { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
         public string TitleId { get; set; }
 
         /// <summary>
@@ -95,14 +102,14 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        public DateTime User_CreateTime { get; set; }
+        public string User_TypeName { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
-        /// Nullable:True
+        /// Nullable:False
         /// </summary>
-        public string User_CreateTimeShort { get; set; }
+        public DateTime User_CreateTime { get; set; }
 
         /// <summary>
         /// Desc:
@@ -117,20 +124,6 @@ namespace WJ.Entity
         /// Nullable:True
         /// </summary>
         public string User_Token { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public string User_TypeName { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public string Dept_Name { get; set; }
 
         /// <summary>
         /// Desc:

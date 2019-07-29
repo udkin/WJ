@@ -52,6 +52,13 @@ namespace WJ.Entity
         public int Title_Sort { get; set; }
 
         /// <summary>
+        /// Desc:
+        /// Default:DateTime.Now
+        /// Nullable:False
+        /// </summary>
+        public DateTime Title_CreateTime { get; set; }
+
+        /// <summary>
         /// Desc:职务状态，-1：删除，1：正常
         /// Default:1
         /// Nullable:False

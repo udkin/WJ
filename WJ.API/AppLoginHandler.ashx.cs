@@ -61,7 +61,7 @@ namespace WJ.API
             }
             else
             {
-                HttpContext.Current.Response.Write(string.Format(appInfo.AppConfig_Form, appInfo.UserApp_LoginName, appInfo.UserApp_Password));
+                HttpContext.Current.Response.Write(string.Format(appInfo.App_Form, appInfo.LoginName, appInfo.Password));
             }
         }
     }

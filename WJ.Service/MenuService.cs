@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WJ.Common;
 using WJ.Entity;
 
 namespace WJ.Service
@@ -61,27 +62,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
-                Common.LogHelper.DbServiceLog(ex.Message);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public List<string> GetSuperAdminControllerName()
-        {
-            try
-            {
-                using (SqlSugarClient db = DbInstance)
-                {
-                    return db.Queryable<WJ_V_UserRoleMenu>().Select(f => f.Menu_Control.Substring(0, 1)).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                Common.LogHelper.DbServiceLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }
@@ -99,7 +80,7 @@ namespace WJ.Service
             {
                 using (SqlSugarClient db = DbInstance)
                 {
-                    var userRoleMenuList = db.Queryable<WJ_V_UserRoleMenu>().Where(p => p.UserId == userId).OrderBy(p => p.Menu_Level.Length).OrderBy(p => p.Menu_Sort).ToList();
+                    var userRoleMenuList = db.Queryable<WJ_V_UserRoleMenu>().Where(p => p.UserId == userId).OrderBy(p => p.Menu_Level.Length).ToList();
 
                     List<dynamic> menuList = new List<dynamic>();
                     var firstMenuList = userRoleMenuList.Where(p => p.Menu_Level.Length == 3);
@@ -120,7 +101,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
-                Common.LogHelper.DbServiceLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }
@@ -141,7 +122,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
-                Common.LogHelper.DbServiceLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return null;
             }
         }
@@ -162,7 +143,7 @@ namespace WJ.Service
             }
             catch (Exception ex)
             {
-                Common.LogHelper.DbServiceLog(ex.Message);
+                LogHelper.DbServiceLog(ex.Message);
                 return false;
             }
         }
@@ -196,7 +177,7 @@ namespace WJ.Service
         public List<dynamic> GetUserSubMenu(List<WJ_V_UserRoleMenu> userMenuList, string levelCode)
         {
             List<dynamic> menuList = new List<dynamic>();
-            var subUserMenuList = userMenuList.Where(p => p.Menu_Level.Substring(0, levelCode.Length) == levelCode && p.Menu_Level.Length == levelCode.Length + 3);
+            var subUserMenuList = userMenuList.Where(p => p.Menu_Level.Length == levelCode.Length + 3 && p.Menu_Level.StartsWith(levelCode)).ToList<WJ_V_UserRoleMenu>();
 
             foreach (var item in subUserMenuList)
             {

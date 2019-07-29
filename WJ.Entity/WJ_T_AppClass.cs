@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using SqlSugar;
+using System.Collections.Generic;
 
 namespace WJ.Entity
 {
@@ -13,9 +14,8 @@ namespace WJ.Entity
     {
         public WJ_T_AppClass()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -36,7 +36,14 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        public string AppClass_Image { get; set; }
+        public string AppClass_Icon { get; set; }
+
+        /// <summary>
+        /// Desc:排序号
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public int AppClass_Sort { get; set; }
 
         /// <summary>
         /// Desc:创建者
@@ -53,20 +60,6 @@ namespace WJ.Entity
         public DateTime AppClass_CreateTime { get; set; }
 
         /// <summary>
-        /// Desc:操作者
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public int AppClass_Operator { get; set; }
-
-        /// <summary>
-        /// Desc:操作时间 
-        /// Default:
-        /// Nullable:False
-        /// </summary>
-        public DateTime AppClass_OperationTime { get; set; }
-
-        /// <summary>
         /// Desc:模块状态，-1：废弃，1：启用
         /// Default:1
         /// Nullable:False
@@ -80,5 +73,13 @@ namespace WJ.Entity
         /// </summary>
         public string AppClass_Remark { get; set; }
 
+        /// <summary>
+        /// Desc:备注
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        [SugarColumn(IsIgnore = true)]
+        public List<WJ_T_App> AppList { get; set; }
     }
+
 }

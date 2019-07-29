@@ -13,9 +13,8 @@ namespace WJ.Entity
     {
         public WJ_T_Menu()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -60,7 +59,7 @@ namespace WJ.Entity
         public string Menu_Level { get; set; }
 
         /// <summary>
-        /// Desc:1：目录 ，2：菜单
+        /// Desc:0：目录 ，1：菜单
         /// Default:1
         /// Nullable:False
         /// </summary>
@@ -79,6 +78,5 @@ namespace WJ.Entity
         /// Nullable:False
         /// </summary>
         public int Menu_State { get; set; }
-
     }
 }

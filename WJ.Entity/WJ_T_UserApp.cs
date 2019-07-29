@@ -14,9 +14,8 @@ namespace WJ.Entity
     {
         public WJ_T_UserApp()
         {
-
-
         }
+
         /// <summary>
         /// Desc:
         /// Default:
@@ -26,59 +25,52 @@ namespace WJ.Entity
         public int Id { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:用户ID
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int UserId { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:APP分类ID
         /// Default:
         /// Nullable:False
-        /// </summary>
-        public int AppClassId { get; set; }
+        /// </summary>           
+        public int? AppClassId { get; set; }
 
         /// <summary>
-        /// Desc:
+        /// Desc:APPID
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int AppId { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
+        /// Desc:登录用户名
+        /// Default:‘’
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string UserApp_LoginName { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:
+        /// Desc:密码
+        /// Default:‘’
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string UserApp_Password { get; set; }
 
         /// <summary>
-        /// Desc:
-        /// Default:0
+        /// Desc:排序
+        /// Default:
         /// Nullable:False
-        /// </summary>
-        public int UserApp_AppCount { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:DateTime.Now
-        /// Nullable:False
-        /// </summary>
-        public DateTime? UserApp_LastTime { get; set; }
+        /// </summary>           
+        public int? UserApp_Sort { get; set; }
 
         /// <summary>
         /// Desc:状态，-1：删除，1：正常
         /// Default:1
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int UserApp_State { get; set; }
     }
 }

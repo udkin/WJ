@@ -117,7 +117,10 @@ namespace WJ.Service
         {
             if (isNullColumn)
             {
-                return DbInstance.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
+                using (SqlSugarClient db = DbInstance)
+                {
+                    return DbInstance.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
+                }
             }
             else
             {
@@ -167,12 +170,28 @@ namespace WJ.Service
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<T> GetList()
+        {
+            return CurrentDb.GetList();
+        }
+
+        /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <returns></returns>
         public virtual List<T> GetList(Expression<Func<T, bool>> whereExpression, PageModel page = null)
         {
-            return CurrentDb.GetPageList(whereExpression, page);
+            if(page == null)
+            {
+                return CurrentDb.GetList(whereExpression);
+            }
+            else
+            {
+                return CurrentDb.GetPageList(whereExpression, page);
+            }
         }
 
         /// <summary>

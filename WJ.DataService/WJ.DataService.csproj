@@ -66,7 +66,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common.cs" />
     <Compile Include="AlarmService.cs" />
     <Compile Include="SocketService.cs" />
     <Compile Include="TimedDataService.cs" />

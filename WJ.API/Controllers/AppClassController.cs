@@ -12,12 +12,11 @@ using WJ.Service;
 namespace WJ.API.Controllers
 {
     /// <summary>
-    /// 职务控制器
+    /// 
     /// </summary>
-    [ApiAuthorize]
-    public class TitleController : ApiBaseController
+    public class AppClassController : ApiBaseController
     {
-        #region 获取职务（供下拉列表使用）
+        #region 获取应用分类（供下拉列表使用）
         /// <summary>
         /// 
         /// </summary>
@@ -25,12 +24,12 @@ namespace WJ.API.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet, HttpPost]
-        public IHttpActionResult GetTitle(dynamic request)
+        public IHttpActionResult GetAppClass(dynamic request)
         {
             ResultModel resultObj = GetResultInstance();
             try
             {
-                var resultData = TitleService.Instance.GetTitle();
+                var resultData = AppClassService.Instance.GetAppClass();
                 SetSuccessResult(resultObj, resultData);
             }
             catch (Exception ex)
@@ -43,7 +42,7 @@ namespace WJ.API.Controllers
         }
         #endregion
 
-        #region 获取后台职务列表信息
+        #region 获取后台应用分类列表信息
         /// <summary>
         /// 获取后台管理员列表信息
         /// </summary>
@@ -56,7 +55,7 @@ namespace WJ.API.Controllers
             try
             {
                 int total = 0;
-                var resultData = TitleService.Instance.GetList(data, ref total);
+                var resultData = AppClassService.Instance.GetList(data, ref total);
                 SetSuccessAdminResult(resultObj, total, resultData);
             }
             catch (Exception ex)
@@ -69,7 +68,7 @@ namespace WJ.API.Controllers
         }
         #endregion
 
-        #region 添加职务
+        #region 添加应用分类
         /// <summary>
         /// 
         /// </summary>
@@ -78,12 +77,12 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult Add(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("添加职务信息失败");
+            ResultModel resultObj = GetResultInstance("添加应用分类信息失败");
 
             try
             {
                 string errorMsg = "";
-                if (TitleService.Instance.Add(data, ref errorMsg))
+                if (AppClassService.Instance.Add(UserInfo.Id, data, ref errorMsg))
                 {
                     SetSuccessResult(resultObj);
                 }
@@ -102,7 +101,7 @@ namespace WJ.API.Controllers
         }
         #endregion
 
-        #region 更新职务
+        #region 更新应用分类
         /// <summary>
         /// 
         /// </summary>
@@ -111,12 +110,12 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult Update(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("更新职务信息失败");
+            ResultModel resultObj = GetResultInstance("更新应用分类信息失败");
 
             try
             {
                 string errorMsg = "";
-                if (TitleService.Instance.Update(data, ref errorMsg))
+                if (AppClassService.Instance.Update(data, ref errorMsg))
                 {
                     SetSuccessResult(resultObj);
                 }
@@ -135,7 +134,7 @@ namespace WJ.API.Controllers
         }
         #endregion
 
-        #region 删除职务
+        #region 删除应用分类
         /// <summary>
         /// 
         /// </summary>
@@ -144,13 +143,13 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult Delete(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("删除职务信息失败");
+            ResultModel resultObj = GetResultInstance("删除应用分类信息失败");
 
             try
             {
-                int id = data["Id"].ToObject<int>();
+                var primaryList = ConvertStringToIntList(data["Id"].ToString());
                 string errorMsg = "";
-                if (TitleService.Instance.Delete(id, ref errorMsg))
+                if (AppClassService.Instance.Delete(primaryList, ref errorMsg))
                 {
                     SetSuccessResult(resultObj);
                 }

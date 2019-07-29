@@ -15,109 +15,188 @@ using WJ.Service;
 
 namespace WJ.API.Controllers
 {
-    [ApiAuthorize]
     public class AppController : ApiBaseController
     {
-        #region 登录系统应用
+        #region 获取应用（供下拉列表使用）
         /// <summary>
-        /// 登录系统应用
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet, HttpPost]
+        public IHttpActionResult GetApp(dynamic request)
+        {
+            ResultModel resultObj = GetResultInstance();
+            try
+            {
+                var resultData = AppService.Instance.GetApp();
+                SetSuccessResult(resultObj, resultData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 获取后台应用列表信息
+        /// <summary>
+        /// 获取后台管理员列表信息
         /// </summary>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public HttpResponseMessage PlatformLogin(JObject data)
+        public IHttpActionResult GetList(JObject data)
         {
-            int appId = 1;
-            var appInfo = new DbContext<WJ_V_UserApp>().GetSingle(p => p.UserId == UserInfo.Id && p.AppId == Convert.ToInt32(appId));
-            if (appInfo == null)
-            {
-                HttpResponseMessage redirectResponse = new HttpResponseMessage(HttpStatusCode.Moved);
-                redirectResponse.Headers.Location = new Uri("/404.html");
-                return redirectResponse;
-            }
-            else
-            {
-                //var content = string.Format("UserAccount={0}&Password={1}", appInfo.LoginName, appInfo.Password);//登录名和密码
-                var parameter = string.Format(appInfo.AppConfig_Paramater, appInfo.UserApp_LoginName, appInfo.UserApp_Password);//登录名和密码
+            var resultObj = GetSearchResultInstance();
 
-                HttpWebRequest request = null;
-                if (appInfo.AppConfig_Method.ToUpper() == "GET")
+            try
+            {
+                int total = 0;
+                var resultData = AppService.Instance.GetList(data, ref total);
+                SetSuccessAdminResult(resultObj, total, resultData);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult GetAllAppClassAndApp()
+        {
+            ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取全部APP列表失败" };
+            try
+            {
+                var appClassList = new DbContext<WJ_T_AppClass>().GetList(p => p.AppClass_State == 1);
+                var appList = AppService.Instance.GetList(p => p.App_State == 1);
+
+                foreach(var item in appClassList)
                 {
-                    request = (HttpWebRequest)HttpWebRequest.Create(appInfo.AppConfig_LoginUrl + "?" + parameter);//访问登录页
-                    request.Method = appInfo.AppConfig_Method;
-                    request.ContentType = "application/x-www-form-urlencoded";
+                    item.AppList = appList.Where(p => p.AppClassId == item.Id).ToList();
+                }
+
+                SetSuccessResult(resultObj, appClassList);
+            }
+            catch (Exception ex)
+            {
+                resultObj.ErrorMsg = ex.Message;
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                LogHelper.DebugLog(ex.Message, LogType.Controller);
+            }
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 添加应用
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult Add(JObject data)
+        {
+            ResultModel resultObj = GetResultInstance("添加应用信息失败");
+
+            try
+            {
+                string errorMsg = "";
+                if (AppService.Instance.Add(UserInfo.Id, data, ref errorMsg))
+                {
+                    SetSuccessResult(resultObj);
                 }
                 else
                 {
-                    var buf = Encoding.UTF8.GetBytes(parameter);
-                    request = (HttpWebRequest)HttpWebRequest.Create(appInfo.AppConfig_LoginUrl);//访问登录页
-                    request.Method = appInfo.AppConfig_Method;
-                    request.ContentType = "application/x-www-form-urlencoded";
-                    request.ContentLength = buf.Length;
-                    request.CookieContainer = new CookieContainer();
-
-                    //向提交流中写入信息
-                    var writeStream = request.GetRequestStream();
-                    writeStream.Write(buf, 0, buf.Length);
-                    writeStream.Close();
-                    writeStream.Dispose();
+                    SetFailResult(resultObj, errorMsg);
                 }
-
-                HttpWebResponse response = request.GetResponse() as HttpWebResponse;//此句完成登录，无此句无法得到cookie
-                //Stream stream = response.GetResponseStream();
-                //StreamReader sr = new StreamReader(stream, Encoding.UTF8);
-                //string str = sr.ReadToEnd();
-
-                string session = request.Headers.GetValues("Cookie")[0];//提取Cookie中的Session信息
-                response.Dispose();
-                request.Abort();
-
-                //HttpContext.Current.Response.Headers.Add("Cookie", session);
-                //HttpContext.Current.Response.Redirect(appInfo.App_HomeUrl);//跳转首页
-
-                request = (HttpWebRequest)HttpWebRequest.Create(new Uri(appInfo.AppConfig_HomeUrl));//具体session才能访问的页
-                request.Headers.Add("Cookie", session);
-                response = request.GetResponse() as HttpWebResponse;
-                var resStream = new StreamReader(response.GetResponseStream());//取到返回值
-                string content = resStream.ReadToEnd();//显示返回值
-                resStream.Close();
-                resStream.Dispose();
-                response.Dispose();
-                request.Abort();
-
-                var response1 = new HttpResponseMessage();
-                response1.Content = new StringContent(content);
-                response1.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
-                return response1;
-
-                //redirectResponse.Headers.Location = new Uri();
-                //redirectResponse.Headers.Add("Cookie", session);
-                //redirectResponse.Content = new StringContent(appInfo.App_HomeUrl);
-                //redirectResponse.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("text/html");
-                //return redirectResponse;
             }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
         }
+        #endregion
 
-        public string GetHtml(string url, string cookie)
+        #region 更新应用
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult Update(JObject data)
         {
-            var postUrl = "http://117.78.34.120:8007/main/mainback"; //?rnd=0." + DateTime.Now.Ticks;//此页需登录后才能访问
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(postUrl));//具体session才能访问的页
-            request.Headers.Add("Cookie", cookie);
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            var resStream = new StreamReader(response.GetResponseStream());//取到返回值
-            string content = resStream.ReadToEnd();//显示返回值
-            resStream.Close();
-            resStream.Dispose();
-            response.Dispose();
-            request.Abort();
-            return content;
+            ResultModel resultObj = GetResultInstance("更新应用信息失败");
 
-            //var currentRunPath = AppDomain.CurrentDomain.BaseDirectory;
-            //var substringBin = currentRunPath.IndexOf("bin");
-            //var path = currentRunPath.Substring(0, substringBin) + "Index.html";
-            //var httpResponseMessage = new HttpResponseMessage();
-            //httpResponseMessage.Content = new StringContent(File.ReadAllText(path), Encoding.UTF8);
-            //httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-            //return httpResponseMessage;
+            try
+            {
+                string errorMsg = "";
+                if (AppService.Instance.Update(data, ref errorMsg))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj, errorMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 删除应用
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult Delete(JObject data)
+        {
+            ResultModel resultObj = GetResultInstance("删除应用信息失败");
+
+            try
+            {
+                var primaryList = ConvertStringToIntList(data["Id"].ToString());
+                string errorMsg = "";
+                if (AppService.Instance.Delete(primaryList, ref errorMsg))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj, errorMsg);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
         }
         #endregion
     }
