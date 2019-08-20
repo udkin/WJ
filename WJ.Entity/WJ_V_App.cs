@@ -162,12 +162,21 @@ namespace WJ.Entity
         /// </summary>           
         public DateTime App_CreateTime { get; set; }
 
+        public int App_AuditState { set; get; }
+
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>           
         public int App_State { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string App_StateName { get; set; }
 
     }
 }

@@ -40,7 +40,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_T_Role>().Where(p => p.Role_State == 1).OrderBy(p => p.Role_Sort).Select(f => new { f.Id, f.Role_Name }).ToList();
                 }
@@ -114,8 +114,8 @@ namespace WJ.Service
                             return false;
                         }
 
-                        db.BeginTran();
-                        int roleId = Add(role, db);
+                        db.Ado.BeginTran();
+                        int roleId = AddReturnIdentity(role);
 
                         if (roleId > 0)
                         {
@@ -125,24 +125,25 @@ namespace WJ.Service
                                 roleMneu.RoleId = roleId;
                                 roleMneu.MenuId = Convert.ToInt32(menuId);
 
-                                if (RoleMenuService.Instance.Add(roleMneu, db) <= 0)
+                                if (RoleMenuService.Instance.Add(roleMneu))
                                 {
-                                    db.RollbackTran();
+                                    db.Ado.RollbackTran();
                                     return false;
                                 }
                             }
 
+                            db.Ado.CommitTran();
                             return true;
                         }
                         else
                         {
-                            db.RollbackTran();
+                            db.Ado.RollbackTran();
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     LogHelper.DbServiceLog(ex.Message);
                     errorMsg = ex.Message;
                 }
@@ -196,12 +197,12 @@ namespace WJ.Service
                             return false;
                         }
 
-                        db.BeginTran();
+                        db.Ado.BeginTran();
 
                         WJ_T_Role role = GetSingle(p => p.Id == roleId);
                         role.Role_Name = data["Role_Name"].ToString();
                         role.Role_Sort = data["Role_Sort"].ToObject<int>();
-                        bool flag = Update(role, db);
+                        bool flag = Update(role);
 
                         if (flag)
                         {
@@ -215,20 +216,21 @@ namespace WJ.Service
                                 roleMneu.RoleId = roleId;
                                 roleMneu.MenuId = Convert.ToInt32(menuId);
 
-                                if (RoleMenuService.Instance.Add(roleMneu, db) <= 0)
+                                if (RoleMenuService.Instance.Add(roleMneu))
                                 {
-                                    db.RollbackTran();
+                                    db.Ado.RollbackTran();
                                     return false;
                                 }
                             }
 
+                            db.Ado.CommitTran();
                             return true;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     LogHelper.DbServiceLog(ex.Message);
                     errorMsg = ex.Message;
                 }
@@ -248,7 +250,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     if (db.Queryable<WJ_T_UserRole>().Any(p => rimaryList.Contains<int>(p.RoleId)))
                     {

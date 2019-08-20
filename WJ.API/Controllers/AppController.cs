@@ -43,10 +43,11 @@ namespace WJ.API.Controllers
         }
         #endregion
 
-        #region 获取后台应用列表信息
+        #region 获取应用列表信息
         /// <summary>
-        /// 获取后台管理员列表信息
+        /// 获取应用列表信息
         /// </summary>
+        /// <param name="data"></param>
         /// <returns></returns>
         [HttpGet, HttpPost]
         public IHttpActionResult GetList(JObject data)
@@ -57,7 +58,34 @@ namespace WJ.API.Controllers
             {
                 int total = 0;
                 var resultData = AppService.Instance.GetList(data, ref total);
-                SetSuccessAdminResult(resultObj, total, resultData);
+                SetSearchSuccessResult(resultObj, total, resultData);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 获取应用详细信息
+        /// <summary>
+        /// 获取后台管理员列表信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult GetAppInfo(JObject data)
+        {
+            var resultObj = GetResultInstance();
+
+            try
+            {
+                int appId = data["Id"].ToObject<int>();
+                var resultData = AppService.Instance.GetAppInfo(appId);
+                SetSuccessResult(resultObj);
             }
             catch (Exception ex)
             {
@@ -75,15 +103,15 @@ namespace WJ.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult GetAllAppClassAndApp()
+        public IHttpActionResult GetAllAppClassAndApp(JObject data)
         {
-            ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取全部APP列表失败" };
+            var resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取全部APP列表失败" };
             try
             {
                 var appClassList = new DbContext<WJ_T_AppClass>().GetList(p => p.AppClass_State == 1);
                 var appList = AppService.Instance.GetList(p => p.App_State == 1);
 
-                foreach(var item in appClassList)
+                foreach (var item in appClassList)
                 {
                     item.AppList = appList.Where(p => p.AppClassId == item.Id).ToList();
                 }
@@ -114,7 +142,7 @@ namespace WJ.API.Controllers
             try
             {
                 string errorMsg = "";
-                if (AppService.Instance.Add(UserInfo.Id, data, ref errorMsg))
+                if (AppTempService.Instance.Add(UserInfo.Id, data, ref errorMsg))
                 {
                     SetSuccessResult(resultObj);
                 }
@@ -142,12 +170,12 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult Update(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("更新应用信息失败");
+            var resultObj = GetResultInstance("更新应用信息失败");
 
             try
             {
                 string errorMsg = "";
-                if (AppService.Instance.Update(data, ref errorMsg))
+                if (AppService.Instance.Update(UserInfo.Id, data, ref errorMsg))
                 {
                     SetSuccessResult(resultObj);
                 }
@@ -175,19 +203,83 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult Delete(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("删除应用信息失败");
+            var resultObj = GetResultInstance("申请删除应用失败");
 
             try
             {
-                var primaryList = ConvertStringToIntList(data["Id"].ToString());
-                string errorMsg = "";
-                if (AppService.Instance.Delete(primaryList, ref errorMsg))
+                if (AppService.Instance.Delete(UserInfo.Id, data))
                 {
                     SetSuccessResult(resultObj);
                 }
                 else
                 {
-                    SetFailResult(resultObj, errorMsg);
+                    SetFailResult(resultObj);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 上架应用
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult AppUp(JObject data)
+        {
+            var resultObj = GetResultInstance("申请上架应用失败");
+
+            try
+            {
+                var appId = data["Id"].ToObject<int>();
+                if (AppService.Instance.AppUp(UserInfo.Id, appId))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 下架应用
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult AppDown(JObject data)
+        {
+            var resultObj = GetResultInstance("申请下架应用失败");
+
+            try
+            {
+                var appId = data["Id"].ToObject<int>();
+                if (AppService.Instance.AppDown(UserInfo.Id, appId))
+                {
+                    SetSuccessResult(resultObj);
+                }
+                else
+                {
+                    SetFailResult(resultObj);
                 }
             }
             catch (Exception ex)

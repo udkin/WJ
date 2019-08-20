@@ -23,12 +23,12 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult GetUserAppList(JObject data)
         {
-            SearchResultModel resultObj = GetSearchResultInstance();
+            var resultObj = GetSearchResultInstance();
             try
             {
                 int total = 0;
                 var resultData = UserAppService.Instance.GetList(data, ref total);
-                SetSuccessAdminResult(resultObj, total, resultData);
+                SetSearchSuccessResult(resultObj, total, resultData);
             }
             catch (Exception ex)
             {

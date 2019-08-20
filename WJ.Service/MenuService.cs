@@ -39,7 +39,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     var allMenuList = db.Queryable<WJ_T_Menu>().Where(p => p.Menu_State == 1).OrderBy(p => p.Menu_Level).ToList();
 
@@ -78,7 +78,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     var userRoleMenuList = db.Queryable<WJ_V_UserRoleMenu>().Where(p => p.UserId == userId).OrderBy(p => p.Menu_Level.Length).ToList();
 
@@ -115,7 +115,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_V_UserRoleMenu>().Where(p => p.UserId == userId).Select(f => f.Menu_Control.ToLower()).ToList();
                 }
@@ -136,7 +136,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_V_UserRoleMenu>().Any(p => p.Menu_Control == controllerName && p.UserId == userId);
                 }

@@ -6,12 +6,12 @@ using SqlSugar;
 namespace WJ.Entity
 {
     ///<summary>
-    ///模块审批表
+    ///
     ///</summary>
-    [SugarTable("WJ_T_Audit")]
-    public partial class WJ_T_Audit
+    [SugarTable("WJ_V_Audit")]
+    public partial class WJ_V_Audit
     {
-        public WJ_T_Audit()
+        public WJ_V_Audit()
         {
         }
 
@@ -20,75 +20,112 @@ namespace WJ.Entity
         /// Default:
         /// Nullable:False
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
 
         /// <summary>
-        /// Desc:应用名称
+        /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
         public string App_Name { get; set; }
 
         /// <summary>
-        /// Desc:应用ID
+        /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
         public int? AppId { get; set; }
 
         /// <summary>
-        /// Desc:临时数据ID
+        /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
         public int? AppTempId { get; set; }
 
         /// <summary>
-        /// Desc:申请人
+        /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>
         public int Audit_Applicant { get; set; }
 
         /// <summary>
-        /// Desc:申请时间
-        /// Default:DateTime.Now
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>
+        public string Audit_ApplicantName { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
         /// Nullable:False
         /// </summary>
         public DateTime Audit_ApplyTime { get; set; }
 
         /// <summary>
-        /// Desc:申请类型，1：新建，2：修改，3：删除，4：上架，5：下架
+        /// Desc:
+        /// Default:
+        /// Nullable:False
         /// </summary>
         public int Audit_Type { get; set; }
 
         /// <summary>
-        /// Desc:审批人
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string Audit_TypeName { get; set; }
+
+        /// <summary>
+        /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
         public int? Audit_Approver { get; set; }
 
         /// <summary>
-        /// Desc:审核时间
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string Audit_ApproverName { get; set; }
+
+        /// <summary>
+        /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
         public DateTime? Audit_Approval_Time { get; set; }
 
         /// <summary>
-        /// Desc:审批结果，0：待审批，1：通过，2：驳回
-        /// Default:0
+        /// Desc:
+        /// Default:
         /// Nullable:False
         /// </summary>
         public int Audit_State { get; set; }
 
         /// <summary>
-        /// Desc:备注
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string Audit_StateName { get; set; }
+
+        /// <summary>
+        /// Desc:
         /// Default:
         /// Nullable:True
         /// </summary>
         public string Audit_Remark { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>
+        public string App_Icon { get; set; }
+
     }
 }

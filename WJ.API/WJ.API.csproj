@@ -146,8 +146,10 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AppClassController.cs" />
     <Compile Include="Controllers\AppController.cs" />
+    <Compile Include="Controllers\AuditController.cs" />
     <Compile Include="Controllers\DataServiceController.cs" />
     <Compile Include="Controllers\DeptController.cs" />
+    <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SystemMapController.cs" />
     <Compile Include="Controllers\TestController.cs" />

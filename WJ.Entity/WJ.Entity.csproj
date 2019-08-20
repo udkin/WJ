@@ -52,11 +52,14 @@
     <Compile Include="WJ_T_App.cs" />
     <Compile Include="WJ_T_AppClass.cs" />
     <Compile Include="WJ_T_AppData.cs" />
+    <Compile Include="WJ_T_AppLog.cs" />
     <Compile Include="WJ_T_AppTemp.cs" />
     <Compile Include="WJ_T_Audit.cs" />
     <Compile Include="WJ_T_Dept.cs" />
     <Compile Include="WJ_T_Log.cs" />
     <Compile Include="WJ_T_Menu.cs" />
+    <Compile Include="WJ_T_PlanLog.cs" />
+    <Compile Include="WJ_V_Audit.cs" />
     <Compile Include="WJ_V_Role.cs" />
     <Compile Include="WJ_T_Role.cs" />
     <Compile Include="WJ_T_RoleMenu.cs" />

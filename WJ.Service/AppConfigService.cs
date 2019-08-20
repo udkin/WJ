@@ -40,7 +40,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_V_AppConfig>().Where(p => p.AppConfig_Cycle > 0).ToList();
                 }
@@ -63,7 +63,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_V_AppConfig>().Where(p => p.AppId == appId && p.AppConfigId == appConfigId).First();
                 }

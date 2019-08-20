@@ -52,16 +52,18 @@ namespace WJ.API
 
         public void LoginApp(WJ_T_User userInfo, string appId)
         {
-            var appInfo = new DbContext<WJ_V_UserApp>().GetSingle(p => p.UserId == userInfo.Id && p.AppId == Convert.ToInt32(appId));
+            var userApp = new DbContext<WJ_V_UserApp>().GetSingle(p => p.UserId == userInfo.Id && p.AppId == Convert.ToInt32(appId));
             //var appInfo = AppService.Instance.GetAppLoginInfo(userInfo.Id, Convert.ToInt32(appId));
             HttpContext.Current.Response.ContentType = "text/html";
-            if (appInfo == null)
+            if (userApp == null)
             {
                 HttpContext.Current.Response.Redirect("/404.html");
             }
             else
             {
-                HttpContext.Current.Response.Write(string.Format(appInfo.App_Form, appInfo.LoginName, appInfo.Password));
+                HttpContext.Current.Response.Write(string.Format(userApp.App_Form, userApp.LoginName, userApp.Password));
+
+                AppLogService.Instance.Add(userApp); // 记录用户访问APP信息s
             }
         }
     }

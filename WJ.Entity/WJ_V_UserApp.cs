@@ -30,9 +30,23 @@ namespace WJ.Entity
         /// <summary>
         /// Desc:
         /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public int User_Type { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:False
+        /// </summary>           
+        public string User_TypeName { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
         /// Nullable:True
         /// </summary>           
-        public int? AppClassId { get; set; }
+        public int AppClassId { get; set; }
 
         /// <summary>
         /// Desc:

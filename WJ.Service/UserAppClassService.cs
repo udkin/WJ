@@ -40,7 +40,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_V_UserAppClass>().Where(p => p.UserId == userId).ToList();
                 }

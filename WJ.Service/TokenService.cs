@@ -38,7 +38,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     db.Updateable<WJ_T_Token>().SetColumns(p => new WJ_T_Token() { Token_State = 0 }).Where(p => p.UserId == userId && p.Token_State == 1).ExecuteCommand();
                 }
@@ -58,7 +58,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Ado.GetString(string.Format(@"select COUNT(1) from WJ_T_Token where Id in (select MAX(id) from WJ_T_Token 
                                                         where UserId in (select Id from WJ_T_User where User_Token = '{0}' and User_State = 1))
@@ -80,7 +80,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     db.Ado.ExecuteCommand(string.Format("update WJ_T_Token set Token_TimeLimit = DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap where SystemMap_Type = 'TokenTimeLimit'),GETDATE()) where Token_Value = '{0}'", token));
                 }

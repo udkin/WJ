@@ -37,11 +37,11 @@ namespace WJ.Service
         /// <returns></returns>
         public bool AddUserPlanApp(int userId, dynamic jsonObj)
         {
-            using (SqlSugarClient db = DbInstance)
+            using (var db = DbInstance)
             {
                 try
                 {
-                    db.BeginTran();
+                    db.Ado.BeginTran();
 
                     WJ_T_UserPlan plan = new WJ_T_UserPlan()
                     {
@@ -57,7 +57,7 @@ namespace WJ.Service
 
                     if (planId <= 0)
                     {
-                        db.RollbackTran();
+                        db.Ado.RollbackTran();
                         return false;
                     }
 
@@ -77,19 +77,19 @@ namespace WJ.Service
 
                     if (db.Insertable(userPlanAppList.ToArray()).ExecuteCommand() == userPlanAppList.Count)
                     {
-                        db.CommitTran();
+                        db.Ado.CommitTran();
                         return true;
                     }
                     else
                     {
-                        db.RollbackTran();
+                        db.Ado.RollbackTran();
                         return false;
                     }
                 }
                 catch (Exception ex)
                 {
                     LogHelper.DbServiceLog(ex.Message);
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     return false;
                 }
             }
@@ -105,11 +105,11 @@ namespace WJ.Service
         /// <returns></returns>
         public bool UpdateUserPlan(int userId, dynamic jsonObj)
         {
-            using (SqlSugarClient db = DbInstance)
+            using (var db = DbInstance)
             {
                 try
                 {
-                    db.BeginTran();
+                    db.Ado.BeginTran();
 
                     int userPlanId = Convert.ToInt32(jsonObj.PlanId);
                     if (userPlanId <= 0)
@@ -147,19 +147,19 @@ namespace WJ.Service
 
                     if (db.Insertable(userPlanAppList.ToArray()).ExecuteCommand() == userPlanAppList.Count)
                     {
-                        db.CommitTran();
+                        db.Ado.CommitTran();
                         return true;
                     }
                     else
                     {
-                        db.RollbackTran();
+                        db.Ado.RollbackTran();
                         return false;
                     }
                 }
                 catch (Exception ex)
                 {
                     LogHelper.DbServiceLog(ex.Message);
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     return false;
                 }
             }
@@ -175,29 +175,29 @@ namespace WJ.Service
         /// <returns></returns>
         public bool DeleteUserPlan(int userId, dynamic jsonObj)
         {
-            using (SqlSugarClient db = DbInstance)
+            using (var db = DbInstance)
             {
                 try
                 {
-                    db.BeginTran();
+                    db.Ado.BeginTran();
 
                     int userPlanId = Convert.ToInt32(jsonObj.PlanId);
                     if (userPlanId <= 0)
                     {
-                        db.RollbackTran();
+                        db.Ado.RollbackTran();
                         return false;
                     }
 
                     db.Updateable<WJ_T_UserPlan>().SetColumns(p => new WJ_T_UserPlan() { UserPlan_State = -1 }).Where(p => p.Id == userPlanId).ExecuteCommand();//更新用户方案信息
                     db.Updateable<WJ_T_UserPlanApp>().SetColumns(p => new WJ_T_UserPlanApp() { UserPlanApp_State = -1 }).Where(p => p.UserPlanId == userPlanId && p.UserPlanApp_State == 1).ExecuteCommand();//更新用户方案信息
 
-                    db.CommitTran();
+                    db.Ado.CommitTran();
                     return true;
                 }
                 catch (Exception ex)
                 {
                     LogHelper.DbServiceLog(ex.Message);
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     return false;
                 }
             }
@@ -208,7 +208,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<T>().Where(whereExpression).ToList();
                 }

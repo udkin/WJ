@@ -43,7 +43,7 @@ namespace WJ.Service
             {
                 if (db == null)
                 {
-                    using (SqlSugarClient db1 = DbInstance)
+                    using (var db1 = DbInstance)
                     {
                         return db1.Deleteable<WJ_T_RoleMenu>(p => p.RoleId == roleId).ExecuteCommand() > 0;
                     }
@@ -70,7 +70,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     List<WJ_V_RoleMenu> roleMenuList = db.Queryable<WJ_T_Menu, WJ_T_RoleMenu>((m, rm) => new object[] {
                         JoinType.Left,m.Id==rm.MenuId && rm.RoleId == roleId})
@@ -135,7 +135,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     var allMenuList = db.Queryable<WJ_T_Menu>().Where(p => p.Menu_State == 1).OrderBy(p => p.Menu_Level).ToList();
 
@@ -200,7 +200,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     var idList = db.Queryable<WJ_T_Menu, WJ_T_RoleMenu>((m, rm) => new object[] { JoinType.Inner, m.Id == rm.MenuId && rm.RoleId == roleId && m.Menu_Type == 1 })
                         .Select((m, rm) => new { m.Id }).ToList();

@@ -81,11 +81,11 @@ namespace WJ.Service
         /// </summary>
         /// <param name="loginName"></param>
         /// <returns></returns>
-        public WJ_T_User GetUserByToken(string token)
+        public WJ_V_User GetUserByToken(string token)
         {
             try
             {
-                return DbInstance.Queryable<WJ_T_User>().Where(p => p.User_Token == token).First();
+                return DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Token == token).First();
             }
             catch (Exception ex)
             {
@@ -110,6 +110,34 @@ namespace WJ.Service
             catch (Exception ex)
             {
                 LogHelper.DbServiceLog(ex.Message);
+                return false;
+            }
+        }
+        #endregion
+
+        #region 更新用户密码
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="data"></param>
+        /// <param name="errorMsg"></param>
+        /// <returns></returns>
+        public bool SetUserPassword(int userId, JObject data, ref string errorMsg)
+        {
+            try
+            {
+                using (var db = DbInstance)
+                {
+                    string oldPassword = data["oldPassword"].ToString();
+                    string password = data["password"].ToString();
+                    return db.Updateable<WJ_T_User>(p => p.User_Password == password).Where(p => p.Id == userId && p.User_Password == oldPassword).ExecuteCommand() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                errorMsg = ex.Message;
                 return false;
             }
         }
@@ -143,7 +171,7 @@ namespace WJ.Service
                 //  .Or(it => it.User_Name == "a1").ToExpression();//拼接表达式
                 //var list = DbInstance.Queryable<WJ_V_User>().Where(exp).ToList();
 
-                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.Id == 1 || p.User_Type == 1 && p.User_State == 1)
+                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.Id == 1 || p.User_Type <= 2 && p.User_State == 1)
                     .WhereIF(!string.IsNullOrWhiteSpace(userName), p => p.User_Name.Contains(userName))
                     .WhereIF(!string.IsNullOrWhiteSpace(telphone), p => p.User_Name.Contains(telphone))
                     .WhereIF(roleId > 0, p => p.RoleId == data["role"].ToObject<int>())
@@ -172,7 +200,7 @@ namespace WJ.Service
             {
                 try
                 {
-                    if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 1 && p.User_State == 1))
+                    if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 2 && p.User_State == 1))
                     {
                         errorMsg = "存在相同登录用户名";
                     }
@@ -187,14 +215,14 @@ namespace WJ.Service
                         user.User_Head = "";
                         user.User_Sex = data["sex"].ToObject<int>();
                         user.User_Phone = data["telphone"].ToString();
-                        user.User_Type = 1;
+                        user.User_Type = 2;
                         user.User_CreateTime = DateTime.Now;
                         user.User_State = 1;
 
                         int roleId = data["role"].ToObject<int>();
 
-                        db.BeginTran();
-                        int userId = Add(user, db);
+                        db.Ado.BeginTran();
+                        int userId = AddReturnIdentity(user);
 
                         if (userId > 0)
                         {
@@ -202,21 +230,21 @@ namespace WJ.Service
                             userRole.UserId = userId;
                             userRole.RoleId = roleId;
 
-                            if (UserRoleService.Instance.Add(userRole, db) > 0)
+                            if (UserRoleService.Instance.Add(userRole))
                             {
-                                db.CommitTran();
+                                db.Ado.CommitTran();
                                 return true;
                             }
                         }
                         else
                         {
-                            db.RollbackTran();
+                            db.Ado.RollbackTran();
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     LogHelper.DbServiceLog(ex.Message);
                     errorMsg = ex.Message;
                 }
@@ -239,7 +267,7 @@ namespace WJ.Service
                 try
                 {
                     int id = data["Id"].ToObject<int>();
-                    if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 1 && p.User_State == 1))
+                    if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 2 && p.User_State == 1))
                     {
                         errorMsg = "存在相同登录用户名";
                     }
@@ -255,8 +283,8 @@ namespace WJ.Service
                         user.User_Sex = data["sex"].ToObject<int>();
                         user.User_Phone = data["telphone"].ToString();
 
-                        db.BeginTran();
-                        bool flag = Update(user, db);
+                        db.Ado.BeginTran();
+                        bool flag = Update(user);
 
                         if (flag)
                         {
@@ -264,25 +292,25 @@ namespace WJ.Service
                             WJ_T_UserRole userRole = UserRoleService.Instance.GetSingle(p => p.UserId == user.Id);
                             userRole.RoleId = roleId;
 
-                            if (UserRoleService.Instance.Update(userRole, db))
+                            if (UserRoleService.Instance.Update(userRole))
                             {
-                                db.CommitTran();
+                                db.Ado.CommitTran();
                                 return true;
                             }
                             else
                             {
-                                db.RollbackTran();
+                                db.Ado.RollbackTran();
                             }
                         }
                         else
                         {
-                            db.RollbackTran();
+                            db.Ado.RollbackTran();
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     LogHelper.ControllerErrorLog(ex.Message);
                 }
                 return false;
@@ -297,14 +325,15 @@ namespace WJ.Service
         /// <param name="id"></param>
         /// <param name="db"></param>
         /// <returns></returns>
-        public bool DeleteManager(int id)
+        public bool DeleteManager(int id, ref string errorMsg)
         {
             try
             {
-                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.User_Type == 1 && p.Id == id).ExecuteCommand() > 0;
+                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.User_Type == 2 && p.Id == id).ExecuteCommand() > 0;
             }
             catch (Exception ex)
             {
+                errorMsg = ex.Message;
                 LogHelper.DbServiceLog(ex.Message);
                 return false;
             }
@@ -325,9 +354,11 @@ namespace WJ.Service
                 int pageIndex = data["page"].ToObject<int>();
                 int pageSize = data["limit"].ToObject<int>();
                 string name = (data["User_Name"] == null ? "" : data["User_Name"].ToString().Trim());
+                string telphone = (data["telphone"] == null ? "" : data["telphone"].ToString().Trim());
 
-                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type > 1 && p.User_State == 1)
+                var queryable = DbInstance.Queryable<WJ_V_User>().Where(p => p.User_Type > 2 && p.User_State == 1)
                     .WhereIF(!string.IsNullOrWhiteSpace(name), p => p.User_Name.Contains(name))
+                    .WhereIF(!string.IsNullOrWhiteSpace(telphone), p => p.User_Name.Contains(telphone))
                     .OrderBy(p => p.User_Type)
                     .OrderBy(p => p.User_CreateTime)
                     .ToPageList(pageIndex, pageSize, ref totalCount);
@@ -355,7 +386,7 @@ namespace WJ.Service
         {
             try
             {
-                if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 3 && p.User_State == 1))
+                if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 4 && p.User_State == 1))
                 {
                     errorMsg = "存在相同登录用户名";
                 }
@@ -370,7 +401,7 @@ namespace WJ.Service
                     user.User_Head = "";
                     user.User_Sex = data["sex"].ToObject<int>();
                     user.User_Phone = data["telphone"].ToString();
-                    user.User_Type = 3;
+                    user.User_Type = 4;
                     user.User_CreateTime = DateTime.Now;
                     user.User_State = 1;
 
@@ -398,7 +429,7 @@ namespace WJ.Service
             try
             {
                 int id = data["Id"].ToObject<int>();
-                if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 3 && p.User_State == 1))
+                if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 4 && p.User_State == 1))
                 {
                     errorMsg = "存在相同登录用户名";
                 }
@@ -430,19 +461,29 @@ namespace WJ.Service
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="db"></param>
+        /// <param name="rimaryList"></param>
         /// <returns></returns>
-        public bool DeleteUser(int id, ref string errorMsg)
+        public bool DeleteUser(List<int> rimaryList)
         {
-            try
+            using (var db = DbInstance)
             {
-                return DbInstance.Updateable<WJ_T_User>(p => new WJ_T_User() { User_State = -1 }).Where(p => p.User_Type == 3 && p.Id == id).ExecuteCommand() > 0;
-            }
-            catch (Exception ex)
-            {
-                errorMsg = ex.Message;
-                LogHelper.DbServiceLog(ex.Message);
+                try
+                {
+                    db.Ado.BeginTran();
+                    db.Updateable<WJ_T_UserApp>(p => p.UserApp_State == -1).Where(p => rimaryList.Contains<int>(p.UserId)).ExecuteCommand();
+                    if (db.Updateable<WJ_T_User>(p => p.User_State == -1).Where(p => p.User_Type == 4 && rimaryList.Contains<int>(p.Id)).ExecuteCommand() > 0)
+                    {
+                        db.CommitTran();
+                        return true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    db.Ado.RollbackTran();
+                    LogHelper.DbServiceLog(ex.Message);
+                }
+
+                db.Ado.RollbackTran();
                 return false;
             }
         }

@@ -24,11 +24,11 @@ namespace WJ.API.Models
         /// <summary>
         /// 当前用户信息
         /// </summary>
-        public WJ_T_User UserInfo
+        public WJ_V_User UserInfo
         {
             get
             {
-                return ControllerContext.RouteData.Values["UserInfo"] as WJ_T_User;
+                return ControllerContext.RouteData.Values["UserInfo"] as WJ_V_User;
             }
         }
         #endregion
@@ -103,7 +103,20 @@ namespace WJ.API.Models
             resultObj.Success = 1;
             resultObj.Code = 1;
             resultObj.ErrorMsg = "";
-            resultObj.ResultData = resultData;
+            if (resultData != null)
+            {
+                if ((resultData is List<dynamic>))
+                {
+                    if (resultData.Count > 0)
+                    {
+                        resultObj.ResultData = resultData;
+                    }
+                }
+                else
+                {
+                    resultObj.ResultData = resultData;
+                }
+            }
         }
 
         /// <summary>
@@ -112,7 +125,7 @@ namespace WJ.API.Models
         /// <param name="resultObj"></param>
         /// <param name="total"></param>
         /// <param name="resultData"></param>
-        public void SetSuccessAdminResult(SearchResultModel resultObj, int total, dynamic resultData = null)
+        public void SetSearchSuccessResult(SearchResultModel resultObj, int total, dynamic resultData = null)
         {
             SetSuccessResult(resultObj, resultData);
             resultObj.Total = total;
@@ -139,7 +152,7 @@ namespace WJ.API.Models
         /// <returns></returns>
         public List<int> ConvertStringToIntList(string content)
         {
-            var ids = content.TrimStart(',').TrimEnd(',').Split(',');
+            var ids = content.TrimStart(',').TrimEnd(',').Trim().Split(',');
 
             var primaryList = new List<int>();
             foreach (var item in ids)

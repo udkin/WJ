@@ -50,7 +50,7 @@ namespace WJ.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult GetList(JObject data)
+        public IHttpActionResult GetList([FromBody]JObject data)
         {
             var resultObj = GetSearchResultInstance();
 
@@ -58,7 +58,7 @@ namespace WJ.API.Controllers
             {
                 int total = 0;
                 var deptList = DeptService.Instance.GetDeptList(data, ref total);
-                SetSuccessAdminResult(resultObj, total, deptList);
+                SetSearchSuccessResult(resultObj, total, deptList);
             }
             catch (Exception ex)
             {

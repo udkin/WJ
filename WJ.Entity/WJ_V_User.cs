@@ -17,126 +17,126 @@ namespace WJ.Entity
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int Id { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string User_LoginName { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string User_Password { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string User_Name { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True
-        /// </summary>
+        /// </summary>           
         public string User_Head { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int User_Sex { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
-        /// Nullable:True
-        /// </summary>
+        /// Nullable:False
+        /// </summary>           
         public string User_Phone { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int DeptId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string Dept_Name { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
-        public string TitleId { get; set; }
+        /// </summary>           
+        public int TitleId { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
-        public int RoleId { get; set; }
+        /// </summary>           
+        public string Title_Name { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
+        public int? RoleId { get; set; }
+
+        /// <summary>
+        /// Desc:
+        /// Default:
+        /// Nullable:True
+        /// </summary>           
+        public string Role_Name { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int User_Type { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public string User_TypeName { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public DateTime User_CreateTime { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:False
-        /// </summary>
+        /// </summary>           
         public int User_State { get; set; }
 
         /// <summary>
         /// Desc:
         /// Default:
         /// Nullable:True
-        /// </summary>
+        /// </summary>           
         public string User_Token { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary>
-        public string Role_Name { get; set; }
-
-        /// <summary>
-        /// Desc:
-        /// Default:
-        /// Nullable:True
-        /// </summary> 
-        public string Title_Name { get; set; }
     }
 }

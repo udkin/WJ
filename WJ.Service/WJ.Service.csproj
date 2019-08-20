@@ -52,7 +52,12 @@
   <ItemGroup>
     <Compile Include="AppClassService.cs" />
     <Compile Include="AppDataService.cs" />
+    <Compile Include="AppTempService.cs" />
+    <Compile Include="AuditService.cs" />
+    <Compile Include="PlanLogService.cs" />
+    <Compile Include="AppLogService.cs" />
     <Compile Include="RoleMenuService.cs" />
+    <Compile Include="UesrPlanService.cs" />
     <Compile Include="UserPlanAppService.cs" />
     <Compile Include="UserPlanService.cs" />
     <Compile Include="UserAppClassService.cs" />

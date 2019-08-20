@@ -27,6 +27,7 @@ namespace WJ.Service
                     DbType = DbType.SqlServer,
                     InitKeyType = InitKeyType.Attribute,//从特性读取主键和自增列信息
                     IsAutoCloseConnection = true,//开启自动释放模式和EF原理一样我就不多解释了
+                    IsShardSameThread = true//设为true相同线程是同一个SqlConnection
                 });
                 //调式代码 用来打印SQL 
                 db.Aop.OnLogExecuting = (sql, pars) =>
@@ -36,31 +37,37 @@ namespace WJ.Service
                 return db;
             }
         }
-        //public SimpleClient<Student> StudentDb { get { return new SimpleClient<Student>(Db); } }//用来处理Student表的常用操作
-        //public SimpleClient<School> SchoolDb { get { return new SimpleClient<School>(Db); } }//用来处理School表的常用操作
-        public SimpleClient<T> CurrentDb { get { return new SimpleClient<T>(DbInstance); } }//用来处理T表的常用操作
 
         #region 公用方法
+        #region 事务控制方法
+        public void BeginTran()
+        {
+            DbInstance.Ado.BeginTran();
+        }
+        public void CommitTran()
+        {
+            DbInstance.Ado.CommitTran();
+        }
+        public void RollbackTran()
+        {
+            DbInstance.Ado.RollbackTran();
+        }
+        #endregion
+
         #region 新增
+        public virtual bool Add(T obj)
+        {
+            return DbInstance.Insertable(obj).ExecuteReturnIdentity() > 0;
+        }
+
         /// <summary>
         /// 新增
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public virtual bool Add(T obj)
+        public virtual int AddReturnIdentity(T obj)
         {
-            return CurrentDb.Insert(obj);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="db"></param>
-        /// <returns></returns>
-        public virtual int Add(T obj, SqlSugarClient db)
-        {
-            return db.Insertable(obj).ExecuteReturnIdentity();
+            return DbInstance.Insertable(obj).ExecuteReturnIdentity();
         }
         #endregion
 
@@ -72,17 +79,12 @@ namespace WJ.Service
         /// <returns></returns>
         public virtual bool Delete(T obj)
         {
-            return CurrentDb.Delete(obj);
+            return DbInstance.Deleteable<T>().Where(obj).ExecuteCommand() > 0;
         }
 
-        /// <summary>
-        /// 根据实体对象删除
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public virtual bool Delete(T obj, SqlSugarClient db)
+        public bool Delete(Expression<Func<T, bool>> whereExpression)
         {
-            return db.Deleteable<T>().Where(obj).ExecuteCommand() > 0;
+            return DbInstance.Deleteable<T>().Where(whereExpression).ExecuteCommand() > 0;
         }
 
         /// <summary>
@@ -92,18 +94,7 @@ namespace WJ.Service
         /// <returns></returns>
         public virtual bool DeleteById(dynamic id)
         {
-            return CurrentDb.DeleteById(id);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="db"></param>
-        /// <returns></returns>
-        public virtual bool DeleteById(dynamic id, SqlSugarClient db)
-        {
-            return db.Deleteable<T>().In(id).ExecuteCommand() > 0;
+            return DbInstance.Deleteable<T>().In(id).ExecuteCommand() > 0;
         }
         #endregion
 
@@ -113,29 +104,30 @@ namespace WJ.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool Update(T obj, bool isNullColumn = false)
+        public virtual bool Update(T obj)
         {
-            if (isNullColumn)
-            {
-                using (SqlSugarClient db = DbInstance)
-                {
-                    return DbInstance.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
-                }
-            }
-            else
-            {
-                return CurrentDb.Update(obj);
-            }
+            return DbInstance.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
+        }
+
+        public virtual bool Update(dynamic updateObj)
+        {
+            return DbInstance.Updateable<T>(updateObj).ExecuteCommand() > 0;
         }
 
         /// <summary>
-        /// 更新
+        /// 
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="columns"></param>
+        /// <param name="whereExpression"></param>
         /// <returns></returns>
-        public virtual bool Update(T obj, SqlSugarClient db)
+        public bool UpdateEx(Expression<Func<T, T>> columns, Expression<Func<T, bool>> whereExpression)
         {
-            return db.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
+            return DbInstance.Updateable<T>().SetColumns(columns).Where(whereExpression).ExecuteCommand() > 0;
+        }
+
+        public bool UpdateEx(Expression<Func<T, T>> columns, Expression<Func<T, bool>> setValueExpression, Expression<Func<T, bool>> whereExpression)
+        {
+            return DbInstance.Updateable<T>().SetColumns(columns).ReSetValue(setValueExpression).Where(whereExpression).ExecuteCommand() > 0;
         }
         #endregion
 
@@ -146,17 +138,7 @@ namespace WJ.Service
         /// <returns></returns>
         public virtual T GetById(int id)
         {
-            return CurrentDb.GetById(id);
-        }
-
-        /// <summary>
-        /// 根据ID查询返回实体对象
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public virtual T GetById(int id, SqlSugarClient db)
-        {
-            return db.Queryable<T>().InSingle(id);
+            return DbInstance.Queryable<T>().InSingle(id);
         }
 
         /// <summary>
@@ -166,7 +148,7 @@ namespace WJ.Service
         /// <returns></returns>
         public virtual T GetSingle(Expression<Func<T, bool>> whereExpression)
         {
-            return CurrentDb.GetSingle(whereExpression);
+            return DbInstance.Queryable<T>().Single(whereExpression);
         }
 
         /// <summary>
@@ -175,23 +157,24 @@ namespace WJ.Service
         /// <returns></returns>
         public virtual List<T> GetList()
         {
-            return CurrentDb.GetList();
+            return DbInstance.Queryable<T>().ToList();
+        }
+
+        public List<T> GetList(Expression<Func<T, bool>> whereExpression)
+        {
+            return DbInstance.Queryable<T>().Where(whereExpression).ToList();
         }
 
         /// <summary>
         /// 根据条件获取列表
         /// </summary>
         /// <returns></returns>
-        public virtual List<T> GetList(Expression<Func<T, bool>> whereExpression, PageModel page = null)
+        public virtual List<T> GetList(Expression<Func<T, bool>> whereExpression, PageModel page)
         {
-            if(page == null)
-            {
-                return CurrentDb.GetList(whereExpression);
-            }
-            else
-            {
-                return CurrentDb.GetPageList(whereExpression, page);
-            }
+            int count = 0;
+            var result = DbInstance.Queryable<T>().Where(whereExpression).ToPageList(page.PageIndex, page.PageSize, ref count);
+            page.PageCount = count;
+            return result;
         }
 
         /// <summary>
@@ -201,7 +184,7 @@ namespace WJ.Service
         /// <returns></returns>
         public bool IsExits(Expression<Func<T, bool>> whereExpression)
         {
-            using (SqlSugarClient db = DbInstance)
+            using (var db = DbInstance)
             {
                 return db.Queryable<T>().Any(whereExpression);
             }

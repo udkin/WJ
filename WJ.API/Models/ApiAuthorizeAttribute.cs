@@ -27,7 +27,7 @@ namespace WJ.API.Models
 
                 if (TokenService.Instance.CheckToken(token))
                 {
-                    WJ_T_User userInfo = UserService.Instance.GetUserByToken(token);//通过Token获取用户信息
+                    var userInfo = UserService.Instance.GetUserByToken(token);//通过Token获取用户信息
                     TokenService.Instance.UpdateTokenTimeLimit(token);//更新Token有效时间
 
                     if (userInfo.Id == 1)//默认用户为超级管理员

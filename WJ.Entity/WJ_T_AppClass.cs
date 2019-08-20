@@ -74,7 +74,7 @@ namespace WJ.Entity
         public string AppClass_Remark { get; set; }
 
         /// <summary>
-        /// Desc:备注
+        /// Desc:
         /// Default:
         /// Nullable:False
         /// </summary>

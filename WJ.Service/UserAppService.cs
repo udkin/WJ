@@ -42,7 +42,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).ToList();
                 }
@@ -64,7 +64,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).Select(f => new { f.AppClassId, f.AppId, f.App_Name, f.App_Icon, f.App_BrowserType, f.App_Type, f.App_Flag }).ToList();
                 }
@@ -88,7 +88,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     int userId = data["UserId"].ToObject<int>();
                     int pageIndex = data["page"].ToObject<int>();
@@ -119,7 +119,7 @@ namespace WJ.Service
                 {
                     int userId = data["UserId"].ToObject<int>();
 
-                    db.BeginTran();
+                    db.Ado.BeginTran();
 
                     if (userId > 0)
                     {
@@ -138,7 +138,7 @@ namespace WJ.Service
                             if (!newIdList.Contains(oldApp.AppId) && oldApp.UserApp_State != -1)
                             {
                                 oldApp.UserApp_State = -1;
-                                Update(oldApp, db);
+                                Update(oldApp);
                             }
                         }
 
@@ -151,7 +151,7 @@ namespace WJ.Service
                                 if (oldApp.UserApp_State == -1)
                                 {
                                     oldApp.UserApp_State = 1;
-                                    Update(oldApp, db);
+                                    Update(oldApp);
                                 }
                             }
                             else
@@ -161,25 +161,25 @@ namespace WJ.Service
                                 userApp.AppId = id;
                                 userApp.UserApp_State = 1;
 
-                                if (Add(userApp, db) <= 0)
+                                if (Add(userApp))
                                 {
-                                    db.RollbackTran();
+                                    db.Ado.RollbackTran();
                                     break;
                                 }
                             }
                         }
 
-                        db.CommitTran();
+                        db.Ado.CommitTran();
                         return true;
                     }
                     else
                     {
-                        db.RollbackTran();
+                        db.Ado.RollbackTran();
                     }
                 }
                 catch (Exception ex)
                 {
-                    db.RollbackTran();
+                    db.Ado.RollbackTran();
                     LogHelper.DbServiceLog(ex.Message);
                     errorMsg = ex.Message;
                 }

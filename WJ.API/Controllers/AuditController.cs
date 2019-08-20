@@ -11,52 +11,23 @@ using WJ.Service;
 
 namespace WJ.API.Controllers
 {
-    /// <summary>
-    /// 职务控制器
-    /// </summary>
-    [ApiAuthorize]
-    public class TitleController : ApiBaseController
+    public class AuditController : ApiBaseController
     {
-        #region 获取职务（供下拉列表使用）
+        #region 获取待审核信息列表
         /// <summary>
-        /// 
+        /// 获取待审核信息列表
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpGet, HttpPost]
-        public IHttpActionResult GetTitle(dynamic request)
-        {
-            ResultModel resultObj = GetResultInstance();
-            try
-            {
-                var resultData = TitleService.Instance.GetTitle();
-                SetSuccessResult(resultObj, resultData);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
-            }
-
-            return Json<dynamic>(resultObj);
-        }
-        #endregion
-
-        #region 获取后台职务列表信息
-        /// <summary>
-        /// 获取后台管理员列表信息
-        /// </summary>
+        /// <param name="data"></param>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult GetList(JObject data)
+        public IHttpActionResult GetUnAuditList(JObject data)
         {
             var resultObj = GetSearchResultInstance();
 
             try
             {
                 int total = 0;
-                var resultData = TitleService.Instance.GetList(data, ref total);
+                var resultData = AuditService.Instance.GetUnAuditList(data, ref total);
                 SetSearchSuccessResult(resultObj, total, resultData);
             }
             catch (Exception ex)
@@ -69,27 +40,54 @@ namespace WJ.API.Controllers
         }
         #endregion
 
-        #region 添加职务
+        #region 获取已审核信息列表
         /// <summary>
-        /// 
+        /// 获取已审核信息列表
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult Add(JObject data)
+        public IHttpActionResult GetAuditList(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("添加职务信息失败");
+            var resultObj = GetSearchResultInstance();
 
             try
             {
-                string errorMsg = "";
-                if (TitleService.Instance.Add(data, ref errorMsg))
+                int total = 0;
+                var resultData = AuditService.Instance.GetAuditList(data, ref total);
+                SetSearchSuccessResult(resultObj, total, resultData);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                SetFailResult(resultObj, ex.Message);
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 通过应用审核信息
+        /// <summary>
+        /// 通过应用审核信息
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult PassApp(JObject data)
+        {
+            var resultObj = GetResultInstance("通过审核失败");
+
+            try
+            {
+                int auditId = data["Id"].ToObject<int>();
+                if(AuditService.Instance.PassAudit(UserInfo.Id, auditId))
                 {
                     SetSuccessResult(resultObj);
                 }
                 else
                 {
-                    SetFailResult(resultObj, errorMsg);
+                    SetFailResult(resultObj);
                 }
             }
             catch (Exception ex)
@@ -102,27 +100,27 @@ namespace WJ.API.Controllers
         }
         #endregion
 
-        #region 更新职务
+        #region 驳回应用审核信息
         /// <summary>
-        /// 
+        /// 驳回应用审核信息
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult Update(JObject data)
+        public IHttpActionResult RejectApp(JObject data)
         {
-            ResultModel resultObj = GetResultInstance("更新职务信息失败");
+            var resultObj = GetResultInstance("驳回审核失败");
 
             try
             {
-                string errorMsg = "";
-                if (TitleService.Instance.Update(data, ref errorMsg))
+                int auditId = data["Id"].ToObject<int>();
+                if (AuditService.Instance.RejectAudit(UserInfo.Id, auditId))
                 {
                     SetSuccessResult(resultObj);
                 }
                 else
                 {
-                    SetFailResult(resultObj, errorMsg);
+                    SetFailResult(resultObj);
                 }
             }
             catch (Exception ex)
@@ -133,40 +131,6 @@ namespace WJ.API.Controllers
 
             return Json<dynamic>(resultObj);
         }
-        #endregion
-
-        #region 删除职务
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        [HttpGet, HttpPost]
-        public IHttpActionResult Delete(JObject data)
-        {
-            ResultModel resultObj = GetResultInstance("删除职务信息失败");
-
-            try
-            {
-                var primaryList = ConvertStringToIntList(data["Id"].ToString());
-                string errorMsg = "";
-                if (TitleService.Instance.Delete(primaryList, ref errorMsg))
-                {
-                    SetSuccessResult(resultObj);
-                }
-                else
-                {
-                    SetFailResult(resultObj, errorMsg);
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.ControllerErrorLog(ex.Message);
-                SetFailResult(resultObj, ex.Message);
-            }
-
-            return Json<dynamic>(resultObj);
-        }
-        #endregion
+        #endregion 
     }
 }

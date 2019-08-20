@@ -146,7 +146,49 @@ namespace WJ.API.Controllers
             ResultModel resultObj = GetResultInstance();
             try
             {
-                SetSuccessResult(resultObj, UserInfo);
+                SetSuccessResult(resultObj);
+                resultObj.ResultData = UserInfo;
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                resultObj.ErrorMsg = ex.Message;
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
+
+        #region 修改当前用户密码
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult SetUserPassword(JObject data)
+        {
+            ResultModel resultObj = GetResultInstance();
+            try
+            {
+                string oldPassword = data["oldPassword"].ToString();
+                string password = data["password"].ToString();
+                if (UserInfo.User_Password != data["oldPassword"].ToString().Trim())
+                {
+                    SetFailResult(resultObj, "填写的当前密码不正确");
+                }
+                else
+                {
+                    string errorMsg = "";
+                    if(UserService.Instance.UpdateEx(p => new WJ_T_User() { User_Password = password }, p => p.Id == UserInfo.Id && p.User_Password == oldPassword))
+                    {
+                        SetSuccessResult(resultObj);
+                    }
+                    else
+                    {
+                        SetFailResult(resultObj, errorMsg);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -173,7 +215,7 @@ namespace WJ.API.Controllers
             {
                 int total = 0;
                 List<WJ_V_User> managerList = UserService.Instance.GetManagerList(request, ref total);
-                SetSuccessAdminResult(resultObj, total, managerList);
+                SetSearchSuccessResult(resultObj, total, managerList);
             }
             catch (Exception ex)
             {
@@ -255,17 +297,18 @@ namespace WJ.API.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
         [HttpGet, HttpPost]
-        public IHttpActionResult DeleteManager(JObject request)
+        public IHttpActionResult DeleteManager(JObject data)
         {
             ResultModel resultObj = GetResultInstance("删除管理员信息失败");
 
             try
             {
-                int userId = request["Id"].ToObject<int>();
-                if (UserService.Instance.DeleteManager(userId))
+                int userId = data["Id"].ToObject<int>();
+                string errorMsg = string.Empty;
+                if (UserService.Instance.DeleteManager(userId, ref errorMsg))
                 {
                     SetSuccessResult(resultObj);
                 }
@@ -290,12 +333,12 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public IHttpActionResult GetUserList(JObject data)
         {
-            SearchResultModel resultObj = GetSearchResultInstance();
+            var resultObj = GetSearchResultInstance();
             try
             {
                 int total = 0;
                 var resultData = UserService.Instance.GetUserList(data, ref total);
-                SetSuccessAdminResult(resultObj, total, resultData);
+                SetSearchSuccessResult(resultObj, total, resultData);
             }
             catch (Exception ex)
             {
@@ -353,15 +396,10 @@ namespace WJ.API.Controllers
 
             try
             {
-                int userId = data["Id"].ToObject<int>();
-                string errorMsg = string.Empty;
-                if (UserService.Instance.DeleteUser(userId, ref errorMsg))
+                var primaryList = ConvertStringToIntList(data["Id"].ToString());
+                if(UserService.Instance.DeleteUser(primaryList))
                 {
                     SetSuccessResult(resultObj);
-                }
-                else
-                {
-                    SetFailResult(resultObj, errorMsg);
                 }
             }
             catch (Exception ex)

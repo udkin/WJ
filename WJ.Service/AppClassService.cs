@@ -166,7 +166,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     if (db.Queryable<WJ_T_App>().Any(p => rimaryList.Contains<int>(p.AppClassId) && p.App_State == 1))
                     {

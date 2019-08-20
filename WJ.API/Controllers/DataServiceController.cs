@@ -27,7 +27,7 @@ namespace WJ.API.Controllers
         [HttpGet, HttpPost]
         public dynamic GetData(dynamic requestData)
         {
-            WJ_T_User userInfo = null;
+            WJ_V_User userInfo = null;
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "无效身份证凭证" };
             try
             {
@@ -130,7 +130,7 @@ namespace WJ.API.Controllers
         /// </summary>
         /// <param name="requestData"></param>
         /// <returns></returns>
-        public ResultModel GetAppClassAndAppList(WJ_T_User userInfo, dynamic requestData)
+        public ResultModel GetAppClassAndAppList(WJ_V_User userInfo, dynamic requestData)
         {
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取用户APP列表失败" };
             try
@@ -142,12 +142,12 @@ namespace WJ.API.Controllers
 
                 foreach (var item in appList)
                 {
-                    if (!appDict.ContainsKey(item.AppClassId.Value))
+                    if (!appDict.ContainsKey(item.AppClassId))
                     {
-                        appDict.Add(item.AppClassId.Value, new List<dynamic>());
+                        appDict.Add(item.AppClassId, new List<dynamic>());
                     }
 
-                    appDict[item.AppClassId.Value].Add(new
+                    appDict[item.AppClassId].Add(new
                     {
                         AppId = item.AppId,
                         App_Name = item.App_Name,
@@ -186,7 +186,7 @@ namespace WJ.API.Controllers
         /// </summary>
         /// <param name="requestData"></param>
         /// <returns></returns>
-        public ResultModel GetAppList(WJ_T_User userInfo, dynamic requestData)
+        public ResultModel GetAppList(WJ_V_User userInfo, dynamic requestData)
         {
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取用户APP列表失败" };
             try
@@ -210,7 +210,7 @@ namespace WJ.API.Controllers
         ///// </summary>
         ///// <param name="requestData"></param>
         ///// <returns></returns>
-        //public HttpResponseMessage PlatformLogin(WJ_T_User userInfo, string appId)
+        //public HttpResponseMessage PlatformLogin(WJ_V_User userInfo, string appId)
         //{
         //    var appInfo = AppService.Instance.GetAppLoginInfo(userInfo.Id, Convert.ToInt32(appId));
         //    HttpResponseMessage redirectResponse = new HttpResponseMessage(HttpStatusCode.Moved);
@@ -294,7 +294,7 @@ namespace WJ.API.Controllers
         /// <param name="userInfo"></param>
         /// <param name="requestData"></param>
         /// <returns></returns>
-        public ResultModel AddUserPlan(WJ_T_User userInfo, dynamic requestData)
+        public ResultModel AddUserPlan(WJ_V_User userInfo, dynamic requestData)
         {
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "创建用户方案失败" };
             try
@@ -319,7 +319,7 @@ namespace WJ.API.Controllers
         /// <param name="userInfo"></param>
         /// <param name="requestData"></param>
         /// <returns></returns>
-        public ResultModel UpdateUserPlanActivate(WJ_T_User userInfo, dynamic requestData)
+        public ResultModel UpdateUserPlanActivate(WJ_V_User userInfo, dynamic requestData)
         {
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "更新用户方案失败" };
             try
@@ -345,7 +345,7 @@ namespace WJ.API.Controllers
         /// <param name="userInfo"></param>
         /// <param name="requestData"></param>
         /// <returns></returns>
-        public ResultModel DeleteUserPlan(WJ_T_User userInfo, dynamic requestData)
+        public ResultModel DeleteUserPlan(WJ_V_User userInfo, dynamic requestData)
         {
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "删除用户方案失败" };
             try
@@ -370,7 +370,7 @@ namespace WJ.API.Controllers
         /// <param name="userInfo"></param>
         /// <param name="requestData"></param>
         /// <returns></returns>
-        public ResultModel GetUserPlanAndApp(WJ_T_User userInfo, dynamic requestData)
+        public ResultModel GetUserPlanAndApp(WJ_V_User userInfo, dynamic requestData)
         {
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取用户方案信息失败" };
             try
@@ -428,7 +428,7 @@ namespace WJ.API.Controllers
         /// <param name="userInfo"></param>
         /// <param name="requestData"></param>
         /// <returns></returns>
-        public ResultModel UpdateUsePlan(WJ_T_User userInfo, dynamic requestData)
+        public ResultModel UpdateUsePlan(WJ_V_User userInfo, dynamic requestData)
         {
             ResultModel resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取用户方案信息失败" };
             try

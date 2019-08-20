@@ -134,9 +134,12 @@ namespace WJ.Entity
         public DateTime App_CreateTime { get; set; }
 
         /// <summary>
-        /// Desc:应用状态，-1：废弃，1：正常
-        /// Default:1
-        /// Nullable:False
+        /// Desc:应用审核状态，0：待审核，1：审核
+        /// </summary>
+        public int App_AuditState { get; set; }
+
+        /// <summary>
+        /// Desc:应用状态，10：已新建，20：已维护，30：已删除，40：已上架，50：已下架
         /// </summary>
         public int App_State { get; set; }
     }

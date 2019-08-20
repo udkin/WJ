@@ -48,7 +48,7 @@ namespace WJ.Common
         public static void DbServiceLog(string log)
         {
 #if DEBUG
-            WriteLine("【数据操作异常】：" + log);
+            WriteLine("【数据操作类异常】：" + log);
 #else
             DebugLog(log, LogType.Service);
 #endif

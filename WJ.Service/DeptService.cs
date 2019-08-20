@@ -40,7 +40,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     return db.Queryable<WJ_T_Dept>().Where(p => p.Dept_State == 1).OrderBy(p => p.Dept_Sort).Select(f => new { f.Id, f.Dept_Name }).ToList();
                 }
@@ -68,7 +68,7 @@ namespace WJ.Service
 
                 var queryable = DbInstance.Queryable<WJ_T_Dept>().Where(p => p.Dept_State == 1)
                     .WhereIF(!string.IsNullOrWhiteSpace(deptName), p => p.Dept_Name.Contains(deptName))
-                    .OrderBy(p => p.Dept_Lever).OrderBy(p => p.Dept_Sort)
+                    .OrderBy(p => p.Dept_Sort)
                     .ToPageList(pageIndex, pageSize, ref totalCount);
 
                 return queryable;
@@ -168,7 +168,7 @@ namespace WJ.Service
         {
             try
             {
-                using (SqlSugarClient db = DbInstance)
+                using (var db = DbInstance)
                 {
                     if (db.Queryable<WJ_T_User>().Any(p => rimaryList.Contains<int>(p.DeptId) && p.User_State == 1))
                     {

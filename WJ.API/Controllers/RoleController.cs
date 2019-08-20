@@ -58,7 +58,7 @@ namespace WJ.API.Controllers
             {
                 int total = 0;
                 var resultData = RoleService.Instance.GetList(data, ref total);
-                SetSuccessAdminResult(resultObj, total, resultData);
+                SetSearchSuccessResult(resultObj, total, resultData);
             }
             catch (Exception ex)
             {
