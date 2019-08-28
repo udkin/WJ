@@ -82,12 +82,36 @@ namespace WJ.Service
             {
                 using (var db = DbInstance)
                 {
-                    db.Ado.ExecuteCommand(string.Format("update WJ_T_Token set Token_TimeLimit = DATEADD(S,(select CAST(SystemMap_Value as int) from WJ_T_SystemMap where SystemMap_Type = 'TokenTimeLimit'),GETDATE()) where Token_Value = '{0}'", token));
+                    db.Ado.ExecuteCommand(string.Format(@"update WJ_T_Token set Token_TimeLimit = DATEADD(S,(select CAST(SystemMap_Value as int) 
+                                                        from WJ_T_SystemMap where SystemMap_Type = 'TokenTimeLimit'),GETDATE()) where Token_Value = '{0}'", token));
                 }
             }
             catch (Exception ex)
             {
                 LogHelper.DbServiceLog(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
+        public int GetUserLogCount(DateTime start, DateTime end)
+        {
+            try
+            {
+                using (var db = DbInstance)
+                {
+                    return db.Ado.GetInt(string.Format("select count(1) from WJ_T_Token where Token_CreateTime between '{0}' and '{1}'"
+                                                       , start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd") + " 23:59:59.999"));
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                return -1;
             }
         }
     }

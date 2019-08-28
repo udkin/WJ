@@ -132,9 +132,10 @@ namespace WJ.API.Controllers
 
             return Json<dynamic>(resultObj);
         }
-        #endregion 
+        #endregion
         #endregion
 
+        #region 当前用户操作
         #region 获取当前用户信息
         /// <summary>
         /// 获取当前用户信息
@@ -173,14 +174,14 @@ namespace WJ.API.Controllers
             {
                 string oldPassword = data["oldPassword"].ToString();
                 string password = data["password"].ToString();
-                if (UserInfo.User_Password != data["oldPassword"].ToString().Trim())
+                if (UserInfo.User_Password.ToLower() != data["oldPassword"].ToString().Trim().ToLower())
                 {
-                    SetFailResult(resultObj, "填写的当前密码不正确");
+                    SetFailResult(resultObj, "当前密码不正确");
                 }
                 else
                 {
                     string errorMsg = "";
-                    if(UserService.Instance.UpdateEx(p => new WJ_T_User() { User_Password = password }, p => p.Id == UserInfo.Id && p.User_Password == oldPassword))
+                    if (UserService.Instance.UpdateEx(p => new WJ_T_User() { User_Password = password }, p => p.Id == UserInfo.Id && p.User_Password == oldPassword))
                     {
                         SetSuccessResult(resultObj);
                     }
@@ -198,6 +199,9 @@ namespace WJ.API.Controllers
 
             return Json<dynamic>(resultObj);
         }
+        #endregion
+
+        
         #endregion
 
         #region 管理员
@@ -322,6 +326,34 @@ namespace WJ.API.Controllers
             return Json<dynamic>(resultObj);
         }
         #endregion
+
+        #region 重置管理员密码
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpGet, HttpPost]
+        public IHttpActionResult ResetUserPassword(JObject data)
+        {
+            ResultModel resultObj = GetResultInstance("密码重置失败");
+            try
+            {
+                int id = data["Id"].ToObject<int>();
+                if( UserService.Instance.ResetManagerPassword(id))
+                {
+                    SetSuccessResult(resultObj);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+                resultObj.ErrorMsg = ex.Message;
+            }
+
+            return Json<dynamic>(resultObj);
+        }
+        #endregion
         #endregion
 
         #region 操作用户
@@ -397,7 +429,7 @@ namespace WJ.API.Controllers
             try
             {
                 var primaryList = ConvertStringToIntList(data["Id"].ToString());
-                if(UserService.Instance.DeleteUser(primaryList))
+                if (UserService.Instance.DeleteUser(primaryList))
                 {
                     SetSuccessResult(resultObj);
                 }

@@ -27,7 +27,11 @@ namespace WJ.API.Controllers
             try
             {
                 int total = 0;
-                var resultData = UserAppService.Instance.GetList(data, ref total);
+                int userId = data["UserId"].ToObject<int>();
+                int pageIndex = data["page"].ToObject<int>();
+                int pageSize = data["limit"].ToObject<int>();
+                var resultData = UserAppService.Instance.DbInstance.Queryable<WJ_V_UserApp>().Where(p => p.UserId == userId).ToPageList(pageIndex, pageSize, ref total);
+                //var resultData = UserAppService.Instance.GetList(data, ref total);
                 SetSearchSuccessResult(resultObj, total, resultData);
             }
             catch (Exception ex)

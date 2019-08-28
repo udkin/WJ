@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WJ_TP_AppLog.cs" />
     <Compile Include="WJ_T_AccessLog.cs" />
     <Compile Include="WJ_T_Alarm.cs" />
     <Compile Include="WJ_T_AppConfig.cs" />
@@ -59,6 +60,8 @@
     <Compile Include="WJ_T_Log.cs" />
     <Compile Include="WJ_T_Menu.cs" />
     <Compile Include="WJ_T_PlanLog.cs" />
+    <Compile Include="WJ_V_AppStats.cs" />
+    <Compile Include="WJ_V_AppTemp.cs" />
     <Compile Include="WJ_V_Audit.cs" />
     <Compile Include="WJ_V_Role.cs" />
     <Compile Include="WJ_T_Role.cs" />
@@ -78,7 +81,9 @@
     <Compile Include="WJ_V_User.cs" />
     <Compile Include="WJ_V_UserApp.cs" />
     <Compile Include="WJ_V_UserAppClass.cs" />
+    <Compile Include="WJ_V_UserPlan.cs" />
     <Compile Include="WJ_V_UserPlanApp.cs" />
+    <Compile Include="WJ_V_AppClassLog.cs" />
     <Compile Include="WJ_V_UserRoleMenu.cs" />
   </ItemGroup>
   <ItemGroup>

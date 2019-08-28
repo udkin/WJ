@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="404.html" />
+    <Content Include="App_Data\SqlConfig.xml" />
     <Content Include="App_Data\WebSiteConfig.xml" />
     <Content Include="Global.asax" />
     <Content Include="Web.config">
@@ -147,8 +148,11 @@
     <Compile Include="Controllers\AppClassController.cs" />
     <Compile Include="Controllers\AppController.cs" />
     <Compile Include="Controllers\AuditController.cs" />
+    <Compile Include="Models\CustomErrorMessageDelegatingHandler.cs" />
     <Compile Include="Controllers\DataServiceController.cs" />
     <Compile Include="Controllers\DeptController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ImageController.cs" />
     <Compile Include="Controllers\LogController.cs" />
     <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\SystemMapController.cs" />
@@ -156,8 +160,12 @@
     <Compile Include="Controllers\TitleController.cs" />
     <Compile Include="Controllers\UserAppController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UserPlanController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="ImageHandler.ashx.cs">
+      <DependentUpon>ImageHandler.ashx</DependentUpon>
     </Compile>
     <Compile Include="Models\AuthFilterAttribute.cs" />
     <Compile Include="Models\AuthInfo.cs" />
@@ -178,6 +186,7 @@
     <Content Include="AppLoginHandler.ashx" />
     <Content Include="Font\iconfont.ttf" />
     <Content Include="Font\iconfont.woff" />
+    <Content Include="ImageHandler.ashx" />
     <None Include="Properties\PublishProfiles\WJApi.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -188,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Code\" />
+    <Folder Include="Store\Image\" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

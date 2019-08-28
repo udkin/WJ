@@ -113,79 +113,76 @@ namespace WJ.Service
         /// <returns></returns>
         public bool SetUserApp(JObject data, ref string errorMsg)
         {
-            using (SqlSugar.SqlSugarClient db = DbInstance)
+            try
             {
-                try
+                int userId = data["UserId"].ToObject<int>();
+
+                BeginTran();
+
+                if (userId > 0)
                 {
-                    int userId = data["UserId"].ToObject<int>();
-
-                    db.Ado.BeginTran();
-
-                    if (userId > 0)
+                    List<int> oldIdList = new List<int>();
+                    List<int> newIdList = new List<int>();
+                    foreach (var item in data["AppList"].ToArray())
                     {
-                        List<int> oldIdList = new List<int>();
-                        List<int> newIdList = new List<int>();
-                        foreach (var item in data["AppList"].ToArray())
+                        newIdList.Add(item["AppId"].ToObject<int>());
+                    }
+
+                    var oldAppList = GetList(p => p.UserId == userId);
+
+                    foreach (var oldApp in oldAppList)
+                    {
+                        oldIdList.Add(oldApp.AppId);
+                        if (!newIdList.Contains(oldApp.AppId) && oldApp.UserApp_State != -1)
                         {
-                            newIdList.Add(item["AppId"].ToObject<int>());
+                            oldApp.UserApp_State = -1;
+                            Update(oldApp);
                         }
+                    }
 
-                        var oldAppList = db.Queryable<WJ_T_UserApp>().Where(p => p.UserId == userId).ToList();
-
-                        foreach (var oldApp in oldAppList)
+                    foreach (var id in newIdList)
+                    {
+                        // 原有APP列表中已经存在
+                        var oldApp = oldAppList.FirstOrDefault(p => p.AppId == id);
+                        if (oldApp != null)
                         {
-                            oldIdList.Add(oldApp.AppId);
-                            if (!newIdList.Contains(oldApp.AppId) && oldApp.UserApp_State != -1)
+                            if (oldApp.UserApp_State == -1)
                             {
-                                oldApp.UserApp_State = -1;
+                                oldApp.UserApp_State = 1;
                                 Update(oldApp);
                             }
                         }
-
-                        foreach (var id in newIdList)
+                        else
                         {
-                            // 原有APP列表中已经存在
-                            var oldApp = oldAppList.FirstOrDefault(p => p.AppId == id);
-                            if (oldApp != null)
-                            {
-                                if (oldApp.UserApp_State == -1)
-                                {
-                                    oldApp.UserApp_State = 1;
-                                    Update(oldApp);
-                                }
-                            }
-                            else
-                            {
-                                WJ_T_UserApp userApp = new WJ_T_UserApp();
-                                userApp.UserId = userId;
-                                userApp.AppId = id;
-                                userApp.UserApp_State = 1;
+                            WJ_T_UserApp userApp = new WJ_T_UserApp();
+                            userApp.UserId = userId;
+                            userApp.AppId = id;
+                            userApp.UserApp_State = 1;
 
-                                if (Add(userApp))
-                                {
-                                    db.Ado.RollbackTran();
-                                    break;
-                                }
+                            if (!Add(userApp))
+                            {
+                                RollbackTran();
+                                break;
                             }
                         }
+                    }
 
-                        db.Ado.CommitTran();
-                        return true;
-                    }
-                    else
-                    {
-                        db.Ado.RollbackTran();
-                    }
+                    CommitTran();
+                    return true;
                 }
-                catch (Exception ex)
+                else
                 {
-                    db.Ado.RollbackTran();
-                    LogHelper.DbServiceLog(ex.Message);
-                    errorMsg = ex.Message;
+                    RollbackTran();
                 }
-
-                return false;
             }
+            catch (Exception ex)
+            {
+                RollbackTran();
+                LogHelper.DbServiceLog(ex.Message);
+                errorMsg = ex.Message;
+            }
+
+            return false;
         }
         #endregion
 

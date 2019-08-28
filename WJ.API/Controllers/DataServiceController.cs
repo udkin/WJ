@@ -404,7 +404,7 @@ namespace WJ.API.Controllers
                     {
                         UserPlanId = plan.Id,
                         UserPlan_Name = plan.UserPlan_Name,
-                        UserPlan_Image = plan.UserPlan_Image,
+                        UserPlan_Image = plan.UserPlan_Icon,
                         UserPlan_Layout = plan.UserPlan_Layout,
                         UserPlan_Activate = plan.UserPlan_Activate,
                         UserPlanAppList = planAppDict[plan.Id]

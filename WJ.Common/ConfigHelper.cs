@@ -31,7 +31,8 @@ namespace WJ.Common
         #endregion
 
         #region 变量
-        private const string _xmlPath = "/App_Data/WebSiteConfig.xml";
+        private const string _webSitePath = "/App_Data/WebSiteConfig.xml";
+        private const string _sqlPath = "/App_Data/SqlConfig.xml";
         #endregion
 
         #region 属性
@@ -39,13 +40,13 @@ namespace WJ.Common
         /// 
         /// </summary>
         public static Dictionary<string, string> WebSiteConfig { set; get; }
+        public static Dictionary<string, string> SqlConfig { set; get; }
         #endregion
 
         #region 填充网站配置信息
         /// <summary>
         /// 填充回复用户消息
         /// </summary>
-        /// <param name="dictUserMessage"></param>
         public static void FillWebSiteConfig()
         {
             WebSiteConfig = null;
@@ -59,7 +60,7 @@ namespace WJ.Common
                         if (cache["WebSiteConfig"] == null)
                         {
                             WebSiteConfig = new Dictionary<string, string>();
-                            string filePath = HttpContext.Current.Server.MapPath(_xmlPath);
+                            string filePath = HttpContext.Current.Server.MapPath(_webSitePath);
                             XElement xml = XElement.Load(filePath);
                             foreach (XElement ele in xml.Elements("Config").Elements())
                             {
@@ -133,6 +134,59 @@ namespace WJ.Common
 
         }
         #endregion
+        #endregion
+
+        #region 填充SQL信息
+        /// <summary>
+        /// 填充回复用户消息
+        /// </summary>
+        public static void FillSqlConfig()
+        {
+            SqlConfig = null;
+            try
+            {
+                Cache cache = System.Web.HttpRuntime.Cache;
+                if (cache["SqlConfig"] == null)
+                {
+                    lock ("SqlConfig")
+                    {
+                        if (cache["SqlConfig"] == null)
+                        {
+                            SqlConfig = new Dictionary<string, string>();
+                            string filePath = HttpContext.Current.Server.MapPath(_sqlPath);
+                            XElement xml = XElement.Load(filePath);
+                            foreach (XElement ele in xml.Elements("Config").Elements())
+                            {
+                                string key = ele.Attribute("key").Value;
+                                string value = ele.Attribute("value").Value;
+
+                                if (!SqlConfig.ContainsKey(key))
+                                {
+                                    SqlConfig.Add(key, value);
+                                }
+                            }
+
+                            CacheDependency cdy = new CacheDependency(filePath, DateTime.Now);    // 跟踪文件缓存，如果文件更改自动更新缓存
+                            System.Web.HttpRuntime.Cache.Insert("SqlConfig", SqlConfig, cdy);
+                            //System.Web.HttpRuntime.Cache.Insert("UserMessage", dictUserMessage, cdy, DateTime.Now.AddMonths(1), TimeSpan.Zero, CacheItemPriority.Low, RemoveCallback);
+                        }
+                        else
+                        {
+                            SqlConfig = cache["SqlConfig"] as Dictionary<string, string>;
+                        }
+                    }
+                }
+                else
+                {
+                    SqlConfig = cache["SqlConfig"] as Dictionary<string, string>;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                LogHelper.DebugLog("【网站配置文件异常】：" + ex.Message, LogType.SiteConfig);
+            }
+        }
         #endregion
     }
 }

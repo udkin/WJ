@@ -109,6 +109,11 @@ namespace WJ.Service
             return DbInstance.Updateable(obj).IgnoreColumns(ignoreAllNullColumns: true).ExecuteCommand() > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="updateObj"></param>
+        /// <returns></returns>
         public virtual bool Update(dynamic updateObj)
         {
             return DbInstance.Updateable<T>(updateObj).ExecuteCommand() > 0;
@@ -122,9 +127,17 @@ namespace WJ.Service
         /// <returns></returns>
         public bool UpdateEx(Expression<Func<T, T>> columns, Expression<Func<T, bool>> whereExpression)
         {
-            return DbInstance.Updateable<T>().SetColumns(columns).Where(whereExpression).ExecuteCommand() > 0;
+            return DbInstance.Updateable<T>(columns).Where(whereExpression).ExecuteCommand() > 0; 
+            //return DbInstance.Updateable<T>().SetColumns(columns).Where(whereExpression).ExecuteCommand() > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <param name="setValueExpression"></param>
+        /// <param name="whereExpression"></param>
+        /// <returns></returns>
         public bool UpdateEx(Expression<Func<T, T>> columns, Expression<Func<T, bool>> setValueExpression, Expression<Func<T, bool>> whereExpression)
         {
             return DbInstance.Updateable<T>().SetColumns(columns).ReSetValue(setValueExpression).Where(whereExpression).ExecuteCommand() > 0;
@@ -151,6 +164,7 @@ namespace WJ.Service
             return DbInstance.Queryable<T>().Single(whereExpression);
         }
 
+        #region MyRegion
         /// <summary>
         /// 
         /// </summary>
@@ -176,6 +190,17 @@ namespace WJ.Service
             page.PageCount = count;
             return result;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        public virtual List<T> GetList(string sql)
+        {
+            return DbInstance.Ado.SqlQuery<T>(sql);
+        }
+        #endregion
 
         /// <summary>
         /// 

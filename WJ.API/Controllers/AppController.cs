@@ -36,7 +36,7 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
+                LogHelper.ControllerErrorLog(ex.Message);
             }
 
             return Json<dynamic>(resultObj);
@@ -83,9 +83,18 @@ namespace WJ.API.Controllers
 
             try
             {
-                int appId = data["Id"].ToObject<int>();
-                var resultData = AppService.Instance.GetAppInfo(appId);
-                SetSuccessResult(resultObj);
+                int appId = string.IsNullOrWhiteSpace(data["Id"].ToString()) ? -1 : data["Id"].ToObject<int>();
+                int appTempId = data["TempId"] == null || string.IsNullOrWhiteSpace(data["TempId"].ToString()) ? -1 : data["TempId"].ToObject<int>();
+                if(appId > 0)
+                {
+                    var resultData = AppService.Instance.GetAppInfo(appId);
+                    SetSuccessResult(resultObj, resultData);
+                }
+                else
+                {
+                    var resultData = AppTempService.Instance.GetAppInfo(appTempId);
+                    SetSuccessResult(resultObj, resultData);
+                }
             }
             catch (Exception ex)
             {
@@ -108,8 +117,8 @@ namespace WJ.API.Controllers
             var resultObj = new ResultModel { Success = 0, Code = 0, ErrorMsg = "获取全部APP列表失败" };
             try
             {
-                var appClassList = new DbContext<WJ_T_AppClass>().GetList(p => p.AppClass_State == 1);
-                var appList = AppService.Instance.GetList(p => p.App_State == 1);
+                var appClassList = AppClassService.Instance.GetList(p => p.AppClass_State == 1);
+                var appList = AppService.Instance.GetList(p => p.App_State == 40);
 
                 foreach (var item in appClassList)
                 {
@@ -121,8 +130,7 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 resultObj.ErrorMsg = ex.Message;
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
+                LogHelper.ControllerErrorLog(ex.Message);
             }
             return Json<dynamic>(resultObj);
         }

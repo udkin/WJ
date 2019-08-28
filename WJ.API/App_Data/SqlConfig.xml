@@ -1,0 +1,8 @@
+﻿<Root>
+  <Config>
+    <!-- 应用访问统计SQL -->
+    <item key="AppLogStats" value="select a.Id as AppClass_Id,a.AppClass_Name,COUNT(1) as App_Count from WJ_T_AppClass a left join WJ_T_AppLog b on a.Id = b.AppLog_AppClassId group by a.Id,a.AppClass_Name"></item>
+    <!-- 应用统计SQL -->
+    <item key="AppStats" value="SELECT a.Id as AppClass_Id,a.AppClass_Name,COUNT(b.Id) AS App_Count FROM dbo.WJ_T_AppClass AS a LEFT JOIN dbo.WJ_T_App AS b ON a.Id = b.AppClassId AND a.AppClass_State = 1 AND b.App_State != 30 GROUP BY a.Id, a.AppClass_Name"></item>
+  </Config>
+</Root>

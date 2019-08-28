@@ -24,7 +24,7 @@ namespace WJ.API
                 {
                     if (TokenService.Instance.CheckToken(request["Token"].Trim()) == true)
                     {
-                        WJ_T_User userInfo = new DbContext<WJ_T_User>().GetSingle(p => p.User_Token == request["Token"].Trim() && p.User_State == 1);
+                        WJ_T_User userInfo = UserService.Instance.GetSingle(p => p.User_Token == request["Token"].Trim() && p.User_State == 1);
                         if (userInfo != null)
                         {
                             LoginApp(userInfo, request["AppId"].Trim());
@@ -63,7 +63,19 @@ namespace WJ.API
             {
                 HttpContext.Current.Response.Write(string.Format(userApp.App_Form, userApp.LoginName, userApp.Password));
 
-                AppLogService.Instance.Add(userApp); // 记录用户访问APP信息s
+                WJ_T_AppLog appLog = new WJ_T_AppLog();
+                appLog.AppLog_UserId = userApp.UserId;
+                appLog.AppLog_UserName = userApp.User_Name;
+                appLog.AppLog_UserTypeName = userApp.User_TypeName;
+                appLog.AppLog_AppClassId = userApp.AppClassId;
+                appLog.AppLog_AppClassName = userApp.AppClass_Name;
+                appLog.AppLog_AppId = userApp.AppId;
+                appLog.AppLog_AppName = userApp.App_Name;
+                appLog.AppLog_LoginName = userApp.LoginName;
+                appLog.AppLog_Password = userApp.Password;
+                appLog.AppLog_Time = DateTime.Now;
+
+                AppLogService.Instance.Add(appLog); // 记录用户访问APP信息s
             }
         }
     }

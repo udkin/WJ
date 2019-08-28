@@ -196,61 +196,54 @@ namespace WJ.Service
         /// <returns></returns>
         public bool AddManager(JObject data, ref string errorMsg)
         {
-            using (SqlSugar.SqlSugarClient db = DbInstance)
+            try
             {
-                try
+                if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 2 && p.User_State == 1))
                 {
-                    if (IsExits(p => p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 2 && p.User_State == 1))
+                    errorMsg = "存在相同登录用户名";
+                }
+                else
+                {
+                    WJ_T_User user = new WJ_T_User();
+                    user.User_LoginName = data["loginname"].ToString();
+                    user.User_Password = data["password"].ToString();
+                    user.DeptId = data["dept"].ToObject<int>();
+                    user.TitleId = data["title"].ToObject<int>();
+                    user.User_Name = data["username"].ToString();
+                    user.User_Head = "";
+                    user.User_Sex = data["sex"].ToObject<int>();
+                    user.User_Phone = data["telphone"].ToString();
+                    user.User_Type = 2;
+                    user.User_CreateTime = DateTime.Now;
+                    user.User_State = 1;
+
+                    int roleId = data["role"].ToObject<int>();
+
+                    BeginTran();
+                    int userId = AddReturnIdentity(user);
+
+                    if (userId > 0)
                     {
-                        errorMsg = "存在相同登录用户名";
-                    }
-                    else
-                    {
-                        WJ_T_User user = new WJ_T_User();
-                        user.User_LoginName = data["loginname"].ToString();
-                        user.User_Password = data["password"].ToString();
-                        user.DeptId = data["dept"].ToObject<int>();
-                        user.TitleId = data["title"].ToObject<int>();
-                        user.User_Name = data["username"].ToString();
-                        user.User_Head = "";
-                        user.User_Sex = data["sex"].ToObject<int>();
-                        user.User_Phone = data["telphone"].ToString();
-                        user.User_Type = 2;
-                        user.User_CreateTime = DateTime.Now;
-                        user.User_State = 1;
+                        WJ_T_UserRole userRole = new WJ_T_UserRole();
+                        userRole.UserId = userId;
+                        userRole.RoleId = roleId;
 
-                        int roleId = data["role"].ToObject<int>();
-
-                        db.Ado.BeginTran();
-                        int userId = AddReturnIdentity(user);
-
-                        if (userId > 0)
+                        if (UserRoleService.Instance.Add(userRole))
                         {
-                            WJ_T_UserRole userRole = new WJ_T_UserRole();
-                            userRole.UserId = userId;
-                            userRole.RoleId = roleId;
-
-                            if (UserRoleService.Instance.Add(userRole))
-                            {
-                                db.Ado.CommitTran();
-                                return true;
-                            }
-                        }
-                        else
-                        {
-                            db.Ado.RollbackTran();
+                            CommitTran();
+                            return true;
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    db.Ado.RollbackTran();
-                    LogHelper.DbServiceLog(ex.Message);
-                    errorMsg = ex.Message;
-                }
-
-                return false;
             }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                errorMsg = ex.Message;
+            }
+
+            RollbackTran();
+            return false;
         }
         #endregion
 
@@ -262,59 +255,49 @@ namespace WJ.Service
         /// <returns></returns>
         public bool UpdateManager(JObject data, ref string errorMsg)
         {
-            using (SqlSugar.SqlSugarClient db = DbInstance)
+            try
             {
-                try
+                int id = data["Id"].ToObject<int>();
+                if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 2 && p.User_State == 1))
                 {
-                    int id = data["Id"].ToObject<int>();
-                    if (IsExits(p => p.Id != id && p.User_LoginName == data["loginname"].ToString().Trim() && p.User_Type == 2 && p.User_State == 1))
+                    errorMsg = "存在相同登录用户名";
+                }
+                else
+                {
+                    WJ_T_User user = GetSingle(p => p.Id == id);
+                    user.User_LoginName = data["loginname"].ToString();
+                    user.User_Password = data["password"].ToString();
+                    user.DeptId = data["dept"].ToObject<int>();
+                    user.TitleId = data["title"].ToObject<int>();
+                    user.User_Name = data["username"].ToString();
+                    user.User_Head = "";
+                    user.User_Sex = data["sex"].ToObject<int>();
+                    user.User_Phone = data["telphone"].ToString();
+
+                    BeginTran();
+                    bool flag = Update(user);
+
+                    if (flag)
                     {
-                        errorMsg = "存在相同登录用户名";
-                    }
-                    else
-                    {
-                        WJ_T_User user = GetSingle(p => p.Id == id);
-                        user.User_LoginName = data["loginname"].ToString();
-                        user.User_Password = data["password"].ToString();
-                        user.DeptId = data["dept"].ToObject<int>();
-                        user.TitleId = data["title"].ToObject<int>();
-                        user.User_Name = data["username"].ToString();
-                        user.User_Head = "";
-                        user.User_Sex = data["sex"].ToObject<int>();
-                        user.User_Phone = data["telphone"].ToString();
+                        int roleId = data["role"].ToObject<int>();
+                        WJ_T_UserRole userRole = UserRoleService.Instance.GetSingle(p => p.UserId == user.Id);
+                        userRole.RoleId = roleId;
 
-                        db.Ado.BeginTran();
-                        bool flag = Update(user);
-
-                        if (flag)
+                        if (UserRoleService.Instance.Update(userRole))
                         {
-                            int roleId = data["role"].ToObject<int>();
-                            WJ_T_UserRole userRole = UserRoleService.Instance.GetSingle(p => p.UserId == user.Id);
-                            userRole.RoleId = roleId;
-
-                            if (UserRoleService.Instance.Update(userRole))
-                            {
-                                db.Ado.CommitTran();
-                                return true;
-                            }
-                            else
-                            {
-                                db.Ado.RollbackTran();
-                            }
-                        }
-                        else
-                        {
-                            db.Ado.RollbackTran();
+                            CommitTran();
+                            return true;
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    db.Ado.RollbackTran();
-                    LogHelper.ControllerErrorLog(ex.Message);
-                }
-                return false;
             }
+            catch (Exception ex)
+            {
+                LogHelper.ControllerErrorLog(ex.Message);
+            }
+
+            RollbackTran();
+            return false;
         }
         #endregion
 
@@ -334,6 +317,27 @@ namespace WJ.Service
             catch (Exception ex)
             {
                 errorMsg = ex.Message;
+                LogHelper.DbServiceLog(ex.Message);
+                return false;
+            }
+        }
+        #endregion
+
+        #region 重置管理员密码
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public bool ResetManagerPassword(int id)
+        {
+            try
+            {
+                return DbInstance.Ado.ExecuteCommand(string.Format(@"update WJ_T_User set User_Password = (select SystemMap_Value from wj_t_systemmap where SystemMap_Type = 'InitPassword') where Id = {0}"
+                                        , id)) > 0;
+            }
+            catch (Exception ex)
+            {
                 LogHelper.DbServiceLog(ex.Message);
                 return false;
             }

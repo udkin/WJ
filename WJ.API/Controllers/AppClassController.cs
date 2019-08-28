@@ -35,7 +35,7 @@ namespace WJ.API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                LogHelper.DebugLog(ex.Message, LogType.Controller);
+                LogHelper.ControllerErrorLog(ex.Message);
             }
 
             return Json<dynamic>(resultObj);

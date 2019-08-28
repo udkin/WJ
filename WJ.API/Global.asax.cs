@@ -15,6 +15,7 @@ namespace WJ.API
         {
             // 获取网站配置信息到缓存中
             ConfigHelper.FillWebSiteConfig();
+            ConfigHelper.FillSqlConfig();
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
             // 使api返回为json 

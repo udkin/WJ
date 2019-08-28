@@ -42,7 +42,7 @@ namespace WJ.Service
             {
                 using (var db = DbInstance)
                 {
-                    return db.Queryable<WJ_T_App>().Where(p => p.App_State == 1).OrderBy(p => p.App_Sort).Select(f => new { f.Id, f.App_Name }).ToList();
+                    return db.Queryable<WJ_T_App>().Where(p => p.App_State == 40).OrderBy(p => p.App_Sort).Select(f => new { f.Id, f.App_Name }).ToList();
                 }
             }
             catch (Exception ex)
@@ -224,35 +224,6 @@ namespace WJ.Service
             }
 
             RollbackTran();
-            return false;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rimaryList"></param>
-        /// <param name="db"></param>
-        /// <returns></returns>
-        public bool Delete(List<int> rimaryList, ref string errorMsg)
-        {
-            try
-            {
-                using (var db = DbInstance)
-                {
-                    if (db.Queryable<WJ_T_UserApp>().Any(p => rimaryList.Contains<int>(p.AppId) && p.UserApp_State == 1))
-                    {
-                        errorMsg = "应用已被用户使用不能删除";
-                    }
-                    else
-                    {
-                        return db.Updateable<WJ_T_App>(p => p.App_State == -1).Where(p => rimaryList.Contains<int>(p.Id)).ExecuteCommand() > 0;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.DbServiceLog(ex.Message);
-            }
             return false;
         }
         #endregion

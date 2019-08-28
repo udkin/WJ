@@ -2,6 +2,7 @@
 using SqlSugar;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace WJ.Service
                     .WhereIF(data["App_Name"] != null && data["App_Name"].ToString().Trim() != "", p => p.App_Name.Contains(data["App_Name"].ToString()))
                     .WhereIF(data["Start_Date"] != null && data["Start_Date"].ToString().Trim() != "", p => p.Audit_ApplyTime >= data["Start_Date"].ToObject<DateTime>())
                     .WhereIF(data["End_Date"] != null && data["End_Date"].ToString().Trim() != "", p => p.Audit_ApplyTime < data["End_Date"].ToObject<DateTime>().AddDays(1))
-                    .OrderBy(p => p.Audit_ApplyTime)
+                    .OrderBy(p => p.Audit_ApplyTime, OrderByType.Desc)
                     .ToPageList(pageIndex, pageSize, ref totalCount);
 
                 return queryable;
@@ -80,7 +81,7 @@ namespace WJ.Service
                     .WhereIF(data["App_Name"] != null && data["App_Name"].ToString().Trim() != "", p => p.App_Name.Contains(data["App_Name"].ToString()))
                     .WhereIF(data["Start_Date"] != null && data["Start_Date"].ToString().Trim() != "", p => p.Audit_ApplyTime >= data["Start_Date"].ToObject<DateTime>())
                     .WhereIF(data["End_Date"] != null && data["End_Date"].ToString().Trim() != "", p => p.Audit_ApplyTime < data["End_Date"].ToObject<DateTime>().AddDays(1))
-                    .OrderBy(p => p.Audit_ApplyTime)
+                    .OrderBy(p => p.Audit_ApplyTime, OrderByType.Desc)
                     .ToPageList(pageIndex, pageSize, ref totalCount);
 
                 return queryable;
@@ -127,7 +128,7 @@ namespace WJ.Service
                         appTemp = AppTempService.Instance.GetSingle(p => p.Id == audit.AppTempId.Value);
                         app.AppClassId = appTemp.AppClassId;
                         app.App_Name = appTemp.AppTemp_Name;
-                        app.App_Icon = appTemp.AppTemp_Icon;
+                        app.App_Icon = appTemp.AppTemp_Icon.Replace("t_", "");
                         app.App_Type = appTemp.AppTemp_Type;
                         app.App_Flag = appTemp.AppTemp_Flag;
 
@@ -153,9 +154,8 @@ namespace WJ.Service
                             app.App_Password = "";
                             app.App_BrowserType = null;
                         }
-                        
+
                         app.App_Sort = appTemp.AppTemp_Sort;
-                        app.App_AuditState = 1;
 
                         if (audit.Audit_Type == 1)
                         {
@@ -171,6 +171,7 @@ namespace WJ.Service
                         flag = true;
                     }
 
+                    app.App_AuditState = 1;
                     app.App_State = audit.Audit_Type * 10;
 
                     if (audit.Audit_Type == 1)
@@ -191,6 +192,14 @@ namespace WJ.Service
 
                     if (flag && UpdateEx(p => new WJ_T_Audit() { Audit_State = 1, Audit_Approver = userId, Audit_Approval_Time = DateTime.Now }, p => p.Id == auditId && p.Audit_State == 0))
                     {
+                        if (!string.IsNullOrWhiteSpace(app.App_Icon))
+                        {
+                            string oldFileName = AppDomain.CurrentDomain.BaseDirectory + "Store\\Image\\" + "t_" + app.App_Icon;
+                            string newFileName = AppDomain.CurrentDomain.BaseDirectory + "Store\\Image\\" + app.App_Icon;
+                            FileInfo fi = new FileInfo(oldFileName);
+                            fi.MoveTo(newFileName);
+                        }
+
                         CommitTran();
                         return true;
                     }
@@ -252,6 +261,30 @@ namespace WJ.Service
                 RollbackTran();
                 LogHelper.DbServiceLog(ex.Message);
                 return false;
+            }
+        }
+        #endregion
+
+        #region 返回首页最新应用操作日志
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="totalCount"></param>
+        /// <returns></returns>
+        public List<WJ_V_Audit> GetTopAuditList(int top)
+        {
+            try
+            {
+                return DbInstance.Queryable<WJ_V_Audit>()
+                .OrderBy(p => p.Audit_ApplyTime, OrderByType.Desc)
+                .Take(top)
+                .ToList();
+            }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                return null;
             }
         }
         #endregion

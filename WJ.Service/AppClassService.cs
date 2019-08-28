@@ -168,7 +168,7 @@ namespace WJ.Service
             {
                 using (var db = DbInstance)
                 {
-                    if (db.Queryable<WJ_T_App>().Any(p => rimaryList.Contains<int>(p.AppClassId) && p.App_State == 1))
+                    if (db.Queryable<WJ_T_App>().Any(p => rimaryList.Contains<int>(p.AppClassId) && p.App_State != 30))
                     {
                         errorMsg = "应用分类已被使用不能删除";
                     }

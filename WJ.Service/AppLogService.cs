@@ -66,35 +66,62 @@ namespace WJ.Service
         }
         #endregion
 
-        #region MyRegion
+        #region 返回首页最新应用操作日志
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="userApp"></param>
+        /// <param name="data"></param>
+        /// <param name="totalCount"></param>
         /// <returns></returns>
-        public bool Add(WJ_V_UserApp userApp)
+        public List<WJ_T_AppLog> GetTopAppLogList(int top)
         {
             try
             {
-                WJ_T_AppLog appLog = new WJ_T_AppLog();
-                appLog.AppLog_UserId = userApp.UserId;
-                appLog.AppLog_UserName = userApp.User_Name;
-                appLog.AppLog_AppClassId = userApp.AppClassId;
-                appLog.AppLog_AppClassName = userApp.AppClass_Name;
-                appLog.AppLog_AppId = userApp.AppId;
-                appLog.AppLog_AppName = userApp.App_Name;
-                appLog.AppLog_LoginName = userApp.LoginName;
-                appLog.AppLog_Password = userApp.Password;
-                appLog.AppLog_Time = DateTime.Now;
-
-                return Add(appLog);
+                return DbInstance.Queryable<WJ_T_AppLog>()
+                .OrderBy(p => p.AppLog_Time, OrderByType.Desc)
+                .Take(top)
+                .ToList();
             }
             catch (Exception ex)
             {
                 LogHelper.DbServiceLog(ex.Message);
+                return null;
             }
+        }
+        #endregion
 
-            return false;
+
+        #region 获取应用访问图表数据
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="scope"></param>
+        /// <returns></returns>
+        public List<WJ_TP_AppLog> GetAppLogData(DateTime start, DateTime end, string scope)
+        {
+            try
+            {
+                string sql = "";
+                if (scope == "month")
+                {
+                    sql = string.Format(@"select CONVERT(char(10),a.AppLog_Time,120) LogDate,COUNT(1) LogCount from WJ_T_AppLog a where a.AppLog_Time between '{0}' and '{1}'
+                                          group by CONVERT(char(10), a.AppLog_Time, 120)", start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd") + " 23:59:59.999");
+                }
+                else
+                {
+                    sql = string.Format(@"select CONVERT(char(7),a.AppLog_Time,120) LogDate,COUNT(1) LogCount from WJ_T_AppLog a where a.AppLog_Time between '{0}' and '{1}'
+                                          group by CONVERT(char(7), a.AppLog_Time, 120)", start.ToString("yyyy-MM-dd"), end.ToString("yyyy-MM-dd") + " 23:59:59.999");
+                }
+
+                return new DbContext<WJ_TP_AppLog>().GetList(sql);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                return null;
+            }
         }
         #endregion
     }

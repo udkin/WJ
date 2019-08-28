@@ -90,65 +90,59 @@ namespace WJ.Service
         /// <returns></returns>
         public bool Add(int userId, JObject data, ref string errorMsg)
         {
-            using (SqlSugar.SqlSugarClient db = DbInstance)
+            try
             {
-                try
+                if (IsExits(p => p.Role_Name == data["Role_Name"].ToString().Trim() && p.Role_State == 1))
                 {
-                    if (IsExits(p => p.Role_Name == data["Role_Name"].ToString().Trim() && p.Role_State == 1))
+                    errorMsg = "存在相同角色名称";
+                }
+                else
+                {
+                    WJ_T_Role role = new WJ_T_Role();
+                    role.Role_Name = data["Role_Name"].ToString();
+                    role.Role_Sort = data["Role_Sort"].ToObject<int>();
+                    role.Role_Creator = userId;
+                    role.Role_CreateTime = DateTime.Now;
+                    role.Role_State = 1;
+
+                    string menuIds = GetMenuId(data["Role_Menu"]);
+                    if (string.IsNullOrWhiteSpace(menuIds))
                     {
-                        errorMsg = "存在相同角色名称";
+                        errorMsg = "";
+                        return false;
                     }
-                    else
+
+                    BeginTran();
+                    int roleId = AddReturnIdentity(role);
+
+                    if (roleId > 0)
                     {
-                        WJ_T_Role role = new WJ_T_Role();
-                        role.Role_Name = data["Role_Name"].ToString();
-                        role.Role_Sort = data["Role_Sort"].ToObject<int>();
-                        role.Role_Creator = userId;
-                        role.Role_CreateTime = DateTime.Now;
-                        role.Role_State = 1;
-
-                        string menuIds = GetMenuId(data["Role_Menu"]);
-                        if (string.IsNullOrWhiteSpace(menuIds))
+                        foreach (var menuId in menuIds.TrimEnd(',').Split(','))
                         {
-                            errorMsg = "";
-                            return false;
-                        }
+                            WJ_T_RoleMenu roleMneu = new WJ_T_RoleMenu();
+                            roleMneu.RoleId = roleId;
+                            roleMneu.MenuId = Convert.ToInt32(menuId);
 
-                        db.Ado.BeginTran();
-                        int roleId = AddReturnIdentity(role);
-
-                        if (roleId > 0)
-                        {
-                            foreach (var menuId in menuIds.TrimEnd(',').Split(','))
+                            if (!RoleMenuService.Instance.Add(roleMneu))
                             {
-                                WJ_T_RoleMenu roleMneu = new WJ_T_RoleMenu();
-                                roleMneu.RoleId = roleId;
-                                roleMneu.MenuId = Convert.ToInt32(menuId);
-
-                                if (RoleMenuService.Instance.Add(roleMneu))
-                                {
-                                    db.Ado.RollbackTran();
-                                    return false;
-                                }
+                                RollbackTran();
+                                return false;
                             }
+                        }
 
-                            db.Ado.CommitTran();
-                            return true;
-                        }
-                        else
-                        {
-                            db.Ado.RollbackTran();
-                        }
+                        CommitTran();
+                        return true;
                     }
                 }
-                catch (Exception ex)
-                {
-                    db.Ado.RollbackTran();
-                    LogHelper.DbServiceLog(ex.Message);
-                    errorMsg = ex.Message;
-                }
-                return false;
             }
+            catch (Exception ex)
+            {
+                LogHelper.DbServiceLog(ex.Message);
+                errorMsg = ex.Message;
+            }
+
+            RollbackTran();
+            return false;
         }
 
         /// <summary>
@@ -197,7 +191,7 @@ namespace WJ.Service
                             return false;
                         }
 
-                        db.Ado.BeginTran();
+                        BeginTran();
 
                         WJ_T_Role role = GetSingle(p => p.Id == roleId);
                         role.Role_Name = data["Role_Name"].ToString();
@@ -218,19 +212,19 @@ namespace WJ.Service
 
                                 if (RoleMenuService.Instance.Add(roleMneu))
                                 {
-                                    db.Ado.RollbackTran();
+                                    RollbackTran();
                                     return false;
                                 }
                             }
 
-                            db.Ado.CommitTran();
+                            CommitTran();
                             return true;
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    db.Ado.RollbackTran();
+                    RollbackTran();
                     LogHelper.DbServiceLog(ex.Message);
                     errorMsg = ex.Message;
                 }
